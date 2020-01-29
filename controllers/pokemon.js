@@ -14,12 +14,30 @@ module.exports = (db) => {
 
   let received = (request, response) => {
     let id = request.params.id
-    
     const callback = (err,result) => {
-        response.send(result)
-    }
+      const data = {
+        result: result
+      }
+        response.render('pokemon/received',data)
+      }
     db.pokemon.tasksReceived(callback,id)
   }
+
+  let test = (request,response) => {
+    let requestid = request.params.id
+
+    const callback = (err,result) => {
+      
+        response.send(result[0].doneyet)
+      }
+
+    db.pokemon.toggleDone(requestid,callback)
+
+    
+  }
+
+
+  
 
 
   /**
@@ -29,7 +47,9 @@ module.exports = (db) => {
    */
   return {
     index: indexControllerCallback,
-    received: received
+    received: received,
+    test: test
   };
 
-}
+
+} // End module export

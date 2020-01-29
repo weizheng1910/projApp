@@ -45,7 +45,7 @@ ON y.board_id = boards.id
 
 SEE ALL TASKS ASSIGNED TO A USER 
 
-SELECT name AS reqbyusername, requestid, task_id, boardname, taskname, createdat, duedate, doneyet
+SELECT task_id, taskname,name AS reqbyusername, requestid, boardname, createdat, duedate, doneyet
 FROM users
 INNER JOIN
 (SELECT requestedbyuser,requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet

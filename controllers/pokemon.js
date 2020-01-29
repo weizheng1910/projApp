@@ -12,6 +12,15 @@ module.exports = (db) => {
       });
   };
 
+  let received = (request, response) => {
+    let id = request.params.id
+    
+    const callback = (err,result) => {
+        response.send(result)
+    }
+    db.pokemon.tasksReceived(callback,id)
+  }
+
 
   /**
    * ===========================================
@@ -20,6 +29,7 @@ module.exports = (db) => {
    */
   return {
     index: indexControllerCallback,
+    received: received
   };
 
 }

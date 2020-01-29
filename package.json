@@ -17,5 +17,17 @@
     "pg": "^7.4.3",
     "react": "^16.3.2",
     "react-dom": "^16.3.2"
-  }
+  },
+  "description": "Start your MVC app here by copying this bolierplate code.",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wdi-sg/mvc-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/wdi-sg/mvc-template/issues"
+  },
+  "homepage": "https://github.com/wdi-sg/mvc-template#readme"
 }

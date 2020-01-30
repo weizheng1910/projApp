@@ -17,8 +17,11 @@ module.exports = (app, allModels) => {
 
   app.get('/pokemons', pokemonControllerCallbacks.index);
   //app.get('/pokemons/:id', pokemons.getPokemon);
-
   app.get('/user/:id/received', pokemonControllerCallbacks.received);
+  app.get('/user/:id/given', pokemonControllerCallbacks.given);
+  app.get('/toggleDone/:id', pokemonControllerCallbacks.toggleDone);
 
-  app.get('/test/:id', pokemonControllerCallbacks.test)
+  app.get('/editTask/:id', pokemonControllerCallbacks.editTask)
+
+  app.put('/editTask/:id', pokemonControllerCallbacks.submitEditTask)
 };

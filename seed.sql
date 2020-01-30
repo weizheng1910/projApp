@@ -31,7 +31,7 @@ INSERT INTO requests(task_id,user_id,doneYet) VALUES (1,1,'No');
 
 SEE ALL TASKS REQUESTS ASSIGNED BY A USER
 
-SELECT user_id,requestid, name AS boardname, taskname, task_id, createdat, duedate, tobedoneby, doneyet FROM
+SELECT task_id, taskname, tobedoneby, requestid, name AS boardname, createdat, duedate, doneyet FROM
 boards 
 INNER JOIN
 (SELECT name AS taskname, task_id, createdat, duedate, user_id, board_id, tobedoneby, doneyet, requestid FROM tasks

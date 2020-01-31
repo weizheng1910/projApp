@@ -26,8 +26,7 @@ module.exports = (app, allModels) => {
   app.get('/user/:userid/task/:taskid/setRequest', pokemonControllerCallbacks.setRequest)
   
   app.get('/user/:userid/task/:taskid/editRequest', pokemonControllerCallbacks.displayEditRequest)
-
-
+  app.get()
   app.post('/user/:userid/task/:taskid/submitRequest', pokemonControllerCallbacks.submitRequest)
 
   app.put('/user/:userid/editTask/:taskid', pokemonControllerCallbacks.submitEditTask)

@@ -21,7 +21,15 @@ module.exports = (app, allModels) => {
   app.get('/user/:id/given', pokemonControllerCallbacks.given);
   app.get('/toggleDone/:id', pokemonControllerCallbacks.toggleDone);
 
-  app.get('/editTask/:id', pokemonControllerCallbacks.editTask)
+  app.get('/user/:userid/editTask/:taskid', pokemonControllerCallbacks.editTask)
+  app.get('/user/:id/createTask', pokemonControllerCallbacks.createTask)
+  app.get('/user/:userid/task/:taskid/setRequest', pokemonControllerCallbacks.setRequest)
+  
+  app.get('/user/:userid/task/:taskid/editRequest', pokemonControllerCallbacks.displayEditRequest)
 
-  app.put('/editTask/:id', pokemonControllerCallbacks.submitEditTask)
+
+  app.post('/user/:userid/task/:taskid/submitRequest', pokemonControllerCallbacks.submitRequest)
+
+  app.put('/user/:userid/editTask/:taskid', pokemonControllerCallbacks.submitEditTask)
+  app.put('/createTask', pokemonControllerCallbacks.submitCreatedTask)
 };

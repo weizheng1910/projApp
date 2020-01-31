@@ -15,7 +15,7 @@ class Given extends React.Component {
                 <td>{task.duedate}</td>
                 <td>{task.doneyet}</td>
                 <td>
-                  <form action={`/editTask/${task.task_id}`} method='GET'>
+                  <form action={`/user/${task.ownerid}/editTask/${task.task_id}`} method='GET'>
                     <button type='submit' id= {task.task_id} >Edit Task</button>
                   </form>
                 </td>                
@@ -29,6 +29,7 @@ class Given extends React.Component {
         </head>
         <body>
           <h3>Task Given</h3>
+          <div class="overflow-auto">
           <table class="table">
             <thead>
               <tr>
@@ -43,11 +44,13 @@ class Given extends React.Component {
                 <th scope="col"> - </th>
               </tr>
             </thead>
+            
             <tbody>
               {list}
             </tbody>
+            
           </table>
-          
+          </div>
         </body>
       </html>
     );

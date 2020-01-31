@@ -53,10 +53,10 @@ module.exports = (dbPoolInstance) => {
 
   let tasksGiven = (callback,id) => {
     const values = [id]
-    let query = `SELECT task_id, taskname, tobedoneby, requestid, name AS boardname, createdat, duedate, doneyet FROM
+    let query = `SELECT task_id, taskname, ownerid,tobedoneby, requestid, name AS boardname, createdat, duedate, doneyet FROM
 boards 
 INNER JOIN
-(SELECT name AS taskname, task_id, createdat, duedate, user_id, board_id, tobedoneby, doneyet, requestid FROM tasks
+(SELECT name AS taskname, task_id, createdat, duedate, user_id AS ownerid, board_id, tobedoneby, doneyet, requestid FROM tasks
 INNER JOIN
 (SELECT task_id, name AS tobedoneby, doneYet, requests.id AS requestID FROM requests
 INNER JOIN users 
@@ -145,12 +145,100 @@ ON y.board_id = boards.id`
         callback(null, queryResult.rows)
       }
     })
-
   }
 
-        
-       
-      
+  let findLatestTask = (callback) => {
+
+    let query = `SELECT * FROM tasks ORDER BY id DESC LIMIT 1`
+
+    dbPoolInstance.query(query,(error, queryResult) => {
+      if( error ){
+        callback(error, null);
+      }else{
+        let query2 = `SELECT * FROM boards`
+        dbPoolInstance.query(query2,(error,queryResult2) => {
+          queryResult.rows.push(queryResult2.rows)
+          callback(null, queryResult.rows)
+        })
+      }
+    })
+  }
+
+  let submitCreatedTask = (callback,taskObject) => {
+    const values = [taskObject.taskname,taskObject.createdAt,taskObject.dueDate,taskObject.user_id,taskObject.project]
+
+    console.log(values)
+
+    let query = 'INSERT INTO tasks(name,createdAt,dueDate,user_id,board_id) VALUES($1,$2,$3,$4,$5) RETURNING *'
+
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      if(error){
+        callback(error,"Error")
+      } else {  
+        callback(null,queryResult.rows)
+        console.log("Success at query")
+      }
+    })
+  }
+
+  let selectAllUsers = (callback) => {
+    let query = 'SELECT * FROM users'
+
+    dbPoolInstance.query(query,(error,queryResult) => {
+       if(error){
+        callback(error,"Error")
+      } else {  
+        callback(null,queryResult.rows)
+      }
+    })
+  }
+
+  let submitRequest = (callback,requestObj) => {
+    const task_id = requestObj.task_id
+    let userchoices = requestObj.userchoices
+    let query = 'INSERT INTO requests(task_id,user_id,doneYet) VALUES '
+
+    for(let i = 0; i < userchoices.length; i++){
+      if(i == userchoices.length - 1){
+        query+='('+task_id+','+userchoices[i]+',\'No\')'
+      } else {
+        query+='('+task_id+','+userchoices[i]+',\'No\'), '
+      }
+    }
+
+    //Check query language
+    console.log(query)
+
+    dbPoolInstance.query(query,(error,queryResult) => {
+      if(error){
+        callback(error,"Error")
+      } else {
+        callback(null,queryResult.rows)
+      }
+    })
+  }
+
+  let displayEditRequest = (callback,taskid) => {
+    
+    let query = 'SELECT * FROM users'
+
+    dbPoolInstance.query(query,(error,queryResult) => {
+      if(error){
+        console.log("Error stage 1")
+      } else {
+        const values = [taskid]
+        let query2 = 'SELECT * FROM requests WHERE task_id=$1'
+        dbPoolInstance.query(query2, values,(error,queryResult2) => {
+          if(error){
+            console.log("Error stage 2")
+          }
+          queryResult2.rows.unshift(queryResult.rows)
+          callback(null,queryResult2.rows)
+        })
+      }
+    })
+
+  }
 
   return {
     getAll:getAll,
@@ -158,6 +246,11 @@ ON y.board_id = boards.id`
     tasksGiven: tasksGiven,
     toggleDone: toggleDone,
     editTask: editTask,
-    submitEditTask: submitEditTask   
+    submitEditTask: submitEditTask,
+    findLatestTask: findLatestTask,
+    submitCreatedTask: submitCreatedTask,
+    selectAllUsers: selectAllUsers,
+    submitRequest: submitRequest,
+    displayEditRequest: displayEditRequest
   };
 };

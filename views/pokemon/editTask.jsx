@@ -18,7 +18,7 @@ class EditTask extends React.Component {
         </head>
         <body>
           <h3>Task Edit</h3>
-          <form action = {`/editTask/${this.props.task.id}?_method=put`} method="POST">
+          <form action = {`/user/${this.props.owner}/editTask/${this.props.task.id}?_method=put`} method="POST">
 
             <div class="form-group col-md-6">
               <label>Task ID</label>

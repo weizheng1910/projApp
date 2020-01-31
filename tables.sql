@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS boards(
 	description TEXT
 );
 
+
+
 CREATE TABLE IF NOT EXISTS tasks(
 	id SERIAL PRIMARY KEY,
 	name TEXT,
@@ -19,9 +21,12 @@ CREATE TABLE IF NOT EXISTS tasks(
 	board_id INTEGER
 );
 
+/*Make task id user id unique for request*/
+
 CREATE TABLE IF NOT EXISTS requests(
 	id SERIAL PRIMARY KEY,
 	task_id INTEGER,
 	user_id INTEGER,
 	doneYet TEXT
 );
+

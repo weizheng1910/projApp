@@ -1,5 +1,7 @@
 var React = require("react");
 var moment = require('moment');
+var Layout = require('./layout.jsx')
+
 
 class CreateTask extends React.Component {
   render() {
@@ -16,7 +18,13 @@ class CreateTask extends React.Component {
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossOrigin="anonymous"/>
         </head>
         <body>
-          <h3>Task Edit</h3>
+        
+        <Layout userid={this.props.userid}>
+
+
+        <div class="mx-3">
+          <h3>Create Task</h3>
+          </div>
           <form action = {`/createTask?_method=put`} method="POST">
 
             <div className="form-group col-md-6">
@@ -31,7 +39,7 @@ class CreateTask extends React.Component {
 
             <div className="form-group col-md-6">
               <label>User ID</label>
-              <input type="text" name="user_id" readOnly value={this.props.user} className="form-control"/>
+              <input type="text" name="user_id" readOnly value={this.props.userid} className="form-control"/>
             </div>
 
             <div className="form-group col-md-6">
@@ -51,11 +59,16 @@ class CreateTask extends React.Component {
                 {list}
               </select>
             </div>
-
-            <button type="submit" className="btn btn-success">CREATE Form</button>
+              <div class="mx-3">
+            <button type="submit" className="btn btn-success">Create Task</button>
+            </div>
           </form>
+
           
-          
+        
+
+        </Layout>
+        
         </body>
       </html>
     );

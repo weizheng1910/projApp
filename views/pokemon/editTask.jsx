@@ -42,9 +42,18 @@ class EditTask extends React.Component {
                 {list}
               </select>
             </div>
-
-            <button type="submit" class="btn btn-success">Edit Form</button>
+            <div class="mx-3">
+            <button type="submit" class="btn btn-success">Edit Task</button>
+            </div>
           </form>
+
+          <br></br>
+
+          <div class="mx-3">
+          <form action={`/user/${this.props.owner}/deleteTask/${this.props.task.id}?_method=delete`} method="POST">
+            <button type="submit" class="btn btn-danger">Delete Task</button>
+          </form>
+          </div>
           
           
         </body>

@@ -8,17 +8,12 @@ module.exports = (db) => {
    * ===========================================
    */
 
-  let indexControllerCallback = (request, response) => {
-      db.pokemon.getAll((error, allPokemon) => {
-        response.render('pokemon/index', { allPokemon });
-      });
-  };
-
   let received = (request, response) => {
     let id = request.params.id
     const callback = (err,result) => {
       const data = {
-        result: result
+        result: result,
+        userid: id
       }
         response.render('pokemon/received',data)
       }
@@ -29,14 +24,13 @@ module.exports = (db) => {
     let id = request.params.id
     const callback = (err,result) => {
       const data = {
-        result: result
+        result: result,
+        userid: id
       }
         response.render('pokemon/given',data)
       }
     db.pokemon.tasksGiven(callback,id)
   }
-
-
 
   let toggleDone = (request,response) => {
     let requestid = request.params.id
@@ -83,7 +77,7 @@ module.exports = (db) => {
       const data = {
         task: result[0],
         allBoards: result[1],
-        user: userid
+        userid: userid
       }
       response.render('pokemon/createTask',data)
     }
@@ -110,8 +104,8 @@ module.exports = (db) => {
   let setRequest = (request,response) => {
     //Though not needed, use this to verify 
     let userid = request.params.userid
-
     let taskid = request.params.taskid 
+
     const callback = (err,result) => {
       const data = {
         taskowner: userid,
@@ -127,7 +121,7 @@ module.exports = (db) => {
     let userid = request.params.userid;
 
     const callback = (err,result) => {
-     response.redirect(`/user/${userid}/given`)
+     response.redirect('/user/'+userid+'/given')
     }
 
     db.pokemon.submitRequest(callback,request.body)
@@ -151,6 +145,86 @@ module.exports = (db) => {
     db.pokemon.displayEditRequest(callback,taskid)
   }
 
+  let submitEditRequest = (request,response) => {
+    let userid = request.params.userid;
+    let taskid = request.params.taskid;
+
+    const callback = (err,result) => {
+      response.redirect('/user/'+userid+'/given')
+    }
+    db.pokemon.submitEditRequest(callback,request.body)
+  }
+
+  let displayProjectForm = (request,response) => {
+    let userid = request.params.userid
+
+    const data = {
+      userid:userid
+    }
+    response.render('pokemon/createProj',data)
+  }
+
+  let submitNewProject = (request,response) => {
+    let userid = request.params.userid
+
+    const callback = (err,result) => {
+      response.redirect('/user/'+userid+'/projectOverview')
+    }
+
+    db.pokemon.createNewProject(callback,request.body)
+  }
+
+  let projOverview = (request,response) => {
+    let userid = request.params.userid
+    
+    const callback = (err,result) => {
+
+        let boards = result[0]
+        let boardArray = boards.map(board => {return board.id})
+        let tasks = result.slice(1)
+        
+        let resultArray = []
+
+        for(let i = 0; i < boardArray.length; i++){
+          let subArray = tasks.filter(el => el.board_id == boardArray[i])
+          resultArray.push(subArray)
+        }
+
+        const data = {
+          result: resultArray,
+          boards: boards,
+          userid: userid
+        }
+
+        response.render('pokemon/project',data)
+          
+    }
+
+    db.pokemon.seeAllTasksFromProject(callback)
+  }
+
+  let deleteTask = (request,response) => {
+    let userid = request.params.userid
+    let taskid = request.params.taskid
+
+    const callback = (err,result) => {
+      response.redirect('/user/'+userid+'/given')
+    }
+
+    db.pokemon.deleteTask(callback,taskid)
+  }
+
+  let deleteProj = (request,response) => {
+    let userid = request.params.userid
+    let boardid = request.params.boardid
+
+    const callback = (err,result) => {
+
+      response.redirect(`/user/${userid}/projectOverview/`)
+    }
+
+    db.pokemon.cascadingDelete(callback,boardid)
+  }
 
   /**
    * ===========================================
@@ -158,7 +232,6 @@ module.exports = (db) => {
    * ===========================================
    */
   return {
-    index: indexControllerCallback,
     received: received,
     given: given,
     toggleDone: toggleDone,
@@ -168,7 +241,13 @@ module.exports = (db) => {
     submitCreatedTask: submitCreatedTask,
     setRequest: setRequest,
     submitRequest: submitRequest,
-    displayEditRequest: displayEditRequest
+    displayEditRequest: displayEditRequest,
+    submitEditRequest: submitEditRequest,
+    displayProjectForm: displayProjectForm,
+    submitNewProject: submitNewProject,
+    projOverview: projOverview,
+    deleteTask: deleteTask,
+    deleteProj: deleteProj
   };
 
 

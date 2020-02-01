@@ -7,30 +7,7 @@ module.exports = (dbPoolInstance) => {
 
   // `dbPoolInstance` is accessible within this function scope
 
-  let getAll = (callback) => {
-
-    let query = 'SELECT * FROM pokemons';
-
-    dbPoolInstance.query(query, (error, queryResult) => {
-      if( error ){
-
-        // invoke callback function with results after query has executed
-        callback(error, null);
-
-      }else{
-
-        // invoke callback function with results after query has executed
-
-        if( queryResult.rows.length > 0 ){
-          callback(null, queryResult.rows);
-
-        }else{
-          callback(null, null);
-
-        }
-      }
-    });
-  };
+ 
 
   let tasksReceived = (callback,id) => {
     const values = [id]
@@ -237,11 +214,114 @@ ON y.board_id = boards.id`
         })
       }
     })
+  }
 
+  let submitEditRequest = (callback,reqObj) => {
+    
+    const values = [reqObj.task_id]
+    let query = 'DELETE FROM requests WHERE task_id=$1'
+
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+
+      let query2 = 'INSERT INTO requests(task_id,user_id,doneYet) VALUES '
+      let task_id = reqObj.task_id
+      let userchoices = reqObj.userchoices
+
+      for(let i = 0; i < userchoices.length; i++){
+        if(i == userchoices.length - 1){
+          query2+='('+task_id+','+userchoices[i]+',\'No\')'
+        } else {
+          query2+='('+task_id+','+userchoices[i]+',\'No\'), '
+        }
+      }
+
+      dbPoolInstance.query(query2,(error,queryResult) => {
+        if(error){
+          callback(error,"QueryError")
+        } else {
+          callback(null,queryResult.rows)
+        }
+      })//end query2
+    })//end query1
+  }
+
+  let createNewProject = (callback,projObj) => {
+    const values = [projObj.projname,projObj.description]
+    let query = 'INSERT INTO boards(name,description) VALUES($1,$2) RETURNING *'
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      if(error){
+        callback(error,"QueryError")
+      } else {
+        callback(null,queryResult.rows)
+      }
+    })
+  }
+
+  let seeAllTasksFromProject = (callback) => {
+    
+    let query = 'SELECT * FROM tasks'
+
+    dbPoolInstance.query(query,(error,queryResult) => {
+      if(error){
+        callback(error,"QueryError")
+      } else {
+        let query2 = 'SELECT * FROM boards'
+        dbPoolInstance.query(query2,(error,queryResult2) => {
+          queryResult.rows.unshift(queryResult2.rows)
+          callback(null,queryResult.rows)
+        })        
+      }
+    })
+  }
+
+  let deleteTask = (callback,taskid) => {
+    const values= [taskid]
+    let query = 'DELETE FROM tasks WHERE id=$1'
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      
+      let query2 = 'DELETE FROM requests WHERE task_id=$1'
+      dbPoolInstance.query(query2,values,(error,queryResult2) => {
+        callback(null,queryResult.rows)
+      })
+    })
+  }
+
+  let cascadingDelete = (callback,boardid) => {
+
+    const values = [boardid]
+
+    let query = `DELETE FROM requests WHERE task_id IN (SELECT id FROM tasks WHERE board_id=$1)`
+
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      
+      if(error){
+        callback(error,"Query Error Stage 1")
+      } else {
+
+        let query2 = `DELETE FROM tasks WHERE board_id=$1`
+        dbPoolInstance.query(query2,values,(error,queryResult2) => {
+          
+          if(error){
+            callback(error,"Query Error Stage 2")
+          } else {
+
+            let query3 = `DELETE FROM boards WHERE id=$1`
+            dbPoolInstance.query(query3,values,(error,queryResult3) => {
+              
+              if(error){
+                callback(error,"Query Error Stage 3")
+              } else {
+                callback(error,queryResult3)
+              }
+            })
+          }
+        })
+      }
+    })
   }
 
   return {
-    getAll:getAll,
+    
     tasksReceived: tasksReceived,
     tasksGiven: tasksGiven,
     toggleDone: toggleDone,
@@ -251,6 +331,11 @@ ON y.board_id = boards.id`
     submitCreatedTask: submitCreatedTask,
     selectAllUsers: selectAllUsers,
     submitRequest: submitRequest,
-    displayEditRequest: displayEditRequest
+    displayEditRequest: displayEditRequest,
+    submitEditRequest: submitEditRequest,
+    createNewProject: createNewProject,
+    seeAllTasksFromProject: seeAllTasksFromProject,
+    deleteTask: deleteTask,
+    cascadingDelete: cascadingDelete
   };
 };

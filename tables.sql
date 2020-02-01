@@ -10,8 +10,6 @@ CREATE TABLE IF NOT EXISTS boards(
 	description TEXT
 );
 
-
-
 CREATE TABLE IF NOT EXISTS tasks(
 	id SERIAL PRIMARY KEY,
 	name TEXT,
@@ -30,3 +28,11 @@ CREATE TABLE IF NOT EXISTS requests(
 	doneYet TEXT
 );
 
+/*
+SELECT * FROM requests WHERE task_id IN
+(SELECT id FROM tasks WHERE board_id=3);
+
+DELETE FROM tasks WHERE board_id=$1
+
+DELETE FROM boards WHERE id=$1
+*/

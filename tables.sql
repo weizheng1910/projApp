@@ -36,3 +36,10 @@ DELETE FROM tasks WHERE board_id=$1
 
 DELETE FROM boards WHERE id=$1
 */
+
+/*
+
+(SELECT task_id, user_id, name, doneYet FROM requests INNER JOIN users ON requests.user_id = users.id) AS taskIdWithUserName
+
+
+*/

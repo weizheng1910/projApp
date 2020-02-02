@@ -5,35 +5,35 @@ var React = require("react");
 class Layout extends React.Component {
   render() {
     
-    console.log(this.props.children)
+    
     return (
       <html>
         <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossOrigin="anonymous"/>
         </head>
         <body>
-              <nav class="navbar navbar-light bg-light">
-                <a class="navbar-brand mx-1 px-1">ProjApp</a>
+              <nav class="navbar text-white" style={{backgroundColor:'#3b5998'}}>
+                <a class="navbar-brand mx-1 px-1 font-weight-bold">ProjApp</a>
                 <div class="d-flex justify-content-end text-white">
                 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1" href={`/user/${this.props.userid}/projectOverview`}>Overview</a>
+                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/projectOverview`}>Overview</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1" href={`/user/${this.props.userid}/createProject`}>Create Project</a>
+                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/createProject`}>Create Project</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1" href={`/user/${this.props.userid}/createTask`}>Create Task</a>
+                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/createTask`}>Create Task</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1" href={`/user/${this.props.userid}/given`}>Tasks Given</a>
+                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/given`}>Tasks Given</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1" href={`/user/${this.props.userid}/received`}>Tasks Received</a>
+                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/received`}>Tasks Received</a>
                   </form>
 
                 </div>

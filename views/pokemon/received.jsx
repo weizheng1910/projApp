@@ -17,7 +17,7 @@ class Received extends React.Component {
                 <td>{task.doneyet}</td>
                 <td>
                   <form action={`/toggleDone/${task.requestid}`} method='GET'>
-                    <button type='submit'class='done' id= {task.requestid}  >Done</button>
+                    <button type='submit' className="btn text-white font-weight-bold" style={{backgroundColor:'#3b5998'}} id= {task.requestid}  >Done</button>
                   </form>
                 </td>
              </tr>

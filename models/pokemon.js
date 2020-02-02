@@ -259,7 +259,7 @@ ON y.board_id = boards.id`
 
   let seeAllTasksFromProject = (callback) => {
     
-    let query = 'SELECT * FROM tasks'
+    let query = 'SELECT tasks.id AS task_id, tasks.name AS taskname, createdat, duedate, users.name AS username, board_id FROM tasks INNER JOIN users ON users.id = tasks.user_id'
 
     dbPoolInstance.query(query,(error,queryResult) => {
       if(error){
@@ -268,7 +268,12 @@ ON y.board_id = boards.id`
         let query2 = 'SELECT * FROM boards'
         dbPoolInstance.query(query2,(error,queryResult2) => {
           queryResult.rows.unshift(queryResult2.rows)
-          callback(null,queryResult.rows)
+
+          let query3 = 'SELECT task_id, user_id, name, doneYet FROM requests INNER JOIN users ON requests.user_id = users.id'
+          dbPoolInstance.query(query3,(error,queryResult3) => {
+            queryResult.rows.unshift(queryResult3.rows)
+            callback(null,queryResult.rows)
+          })
         })        
       }
     })
@@ -320,6 +325,35 @@ ON y.board_id = boards.id`
     })
   }
 
+  let retrieveProjectData = (callback,boardid) => {
+    const values = [boardid]
+
+    let query = `SELECT * FROM boards WHERE id=$1`
+
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      if(error){
+        callback(error,"Query Error")
+      } else {
+        callback(null,queryResult.rows)
+      }
+    })
+  }
+
+  let submitEditProj = (callback,projObj,projId)=> {
+
+    const values = [projObj.projname,projObj.description,projId]   
+
+    let query = `UPDATE boards SET name=$1, description=$2 WHERE id=$3`
+
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      if(error){
+        callback(error,"Query error")
+      } else {
+        callback(null,queryResult.rows)
+      }
+    })
+  }
+
   return {
     
     tasksReceived: tasksReceived,
@@ -336,6 +370,8 @@ ON y.board_id = boards.id`
     createNewProject: createNewProject,
     seeAllTasksFromProject: seeAllTasksFromProject,
     deleteTask: deleteTask,
-    cascadingDelete: cascadingDelete
+    cascadingDelete: cascadingDelete,
+    retrieveProjectData: retrieveProjectData,
+    submitEditProj: submitEditProj
   };
 };

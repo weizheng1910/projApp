@@ -8,6 +8,10 @@ module.exports = (db) => {
    * ===========================================
    */
 
+   let home = (request,response) => {
+    response.render('pokemon/home')
+   }
+
   let received = (request, response) => {
     let id = request.params.id
     const callback = (err,result) => {
@@ -179,9 +183,10 @@ module.exports = (db) => {
     
     const callback = (err,result) => {
 
-        let boards = result[0]
+        let requestsWithAssigneeName = result[0]
+        let boards = result[1]
         let boardArray = boards.map(board => {return board.id})
-        let tasks = result.slice(1)
+        let tasks = result.slice(2)
         
         let resultArray = []
 
@@ -190,10 +195,13 @@ module.exports = (db) => {
           resultArray.push(subArray)
         }
 
+
+
         const data = {
           result: resultArray,
           boards: boards,
-          userid: userid
+          userid: userid,
+          requestsWithAssigneeName: requestsWithAssigneeName
         }
 
         response.render('pokemon/project',data)
@@ -226,12 +234,46 @@ module.exports = (db) => {
     db.pokemon.cascadingDelete(callback,boardid)
   }
 
+  let displayEditProj = (request,response) => {
+
+    let boardid = request.params.boardid
+    let userid = request.params.userid
+
+    const callback = (err,result) => {
+      const data = {
+        project: result[0],
+        userid: userid,
+        boardid: boardid
+      }
+
+      console.log(data.project)
+
+      response.render('pokemon/editProject',data)
+    }
+
+    db.pokemon.retrieveProjectData(callback,boardid)
+  }
+
+  let submitEditProj = (request,response) => {
+
+    let userid = request.params.userid
+    let projId = request.params.boardid
+    let projObj = request.body
+
+    const callback = (error,result) => {
+      response.redirect('/user/'+userid+'/projectOverview')
+    }
+
+    db.pokemon.submitEditProj(callback,projObj,projId)
+  }
+
   /**
    * ===========================================
    * Export controller functions as a module
    * ===========================================
    */
   return {
+    home:home,
     received: received,
     given: given,
     toggleDone: toggleDone,
@@ -247,7 +289,9 @@ module.exports = (db) => {
     submitNewProject: submitNewProject,
     projOverview: projOverview,
     deleteTask: deleteTask,
-    deleteProj: deleteProj
+    deleteProj: deleteProj,
+    displayEditProj: displayEditProj,
+    submitEditProj: submitEditProj
   };
 
 

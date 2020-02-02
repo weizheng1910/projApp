@@ -77,10 +77,9 @@ class Project extends React.Component {
               if(z.includes("No") == false){
                 return <div class="m-3 d-flex justify-content-between"> 
                     
-                    <div>
-                      {task.taskname} 
-                      <br></br>
-                      
+                    <div >
+                      {task.taskname}
+                      <br></br>                     
                       <small>Assigned by {task.username} on {task.createdat} </small>
                       <br></br>
                       <small>To {string} </small>                    
@@ -97,9 +96,8 @@ class Project extends React.Component {
                   return <div class="m-3 d-flex justify-content-between"> 
                       
                       <div>
-                        {task.taskname} 
-                        <br></br>
-                        
+                        {task.taskname}
+                        <br></br>                        
                         <small>Assigned by {task.username} on {task.createdat} </small>
                         <br></br>
                         <small>To {string} </small>                    
@@ -117,9 +115,8 @@ class Project extends React.Component {
                   return <div class="m-3"> 
                       
                       <div>
-                        {task.taskname} 
-                        <br></br>
-                        
+                        {task.taskname}
+                        <br></br>                        
                         <small>Assigned by {task.username} on {task.createdat} </small>
                         <br></br>
                         <small>To {string} </small>                    

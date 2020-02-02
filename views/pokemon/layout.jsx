@@ -17,24 +17,26 @@ class Layout extends React.Component {
                 <div class="d-flex justify-content-end text-white">
                 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/projectOverview`}>Overview</a>
+                    <a class="nav-link mx-1 px-1 text-white font-weight-light" href={`/user/${this.props.userid}/projectOverview`}>Overview</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/createProject`}>Create Project</a>
+                    <a class="nav-link mx-1 px-1 text-white font-weight-light" href={`/user/${this.props.userid}/createProject`}>Create Project</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/createTask`}>Create Task</a>
+                    <a class="nav-link mx-1 px-1 text-white font-weight-light" href={`/user/${this.props.userid}/createTask`}>Create Task</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/given`}>Tasks Given</a>
+                    <a class="nav-link mx-1 px-1 text-white font-weight-light" href={`/user/${this.props.userid}/given`}>Tasks Given</a>
                   </form>
 
                   <form class="form-inline">
-                    <a class="nav-link mx-1 px-1 text-white" href={`/user/${this.props.userid}/received`}>Tasks Received</a>
+                    <a class="nav-link mx-1 px-1 text-white font-weight-light" href={`/user/${this.props.userid}/received`}>Tasks Received</a>
                   </form>
+
+                  
 
                 </div>
               </nav>          

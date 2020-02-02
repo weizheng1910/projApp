@@ -33,7 +33,7 @@ class Received extends React.Component {
         <Layout userid={this.props.userid}>
 
           <div class="mx-3">
-          <h5>Task Received</h5>
+            <h3>Tasks Received</h3>
           </div>
           <table class="table">
             <thead>

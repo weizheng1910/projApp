@@ -19,11 +19,7 @@ module.exports = (dbPoolInstance) => {
       if( error ){
         callback(error, null);
       }else{
-        if( queryResult.rows.length > 0 ){
-          callback(null, queryResult.rows);
-        }else{
-          callback(null, null);
-        }
+        callback(null, queryResult.rows);
       }
     })
   }
@@ -46,11 +42,7 @@ ON y.board_id = boards.id`
       if( error ){
         callback(error, null);
       }else{
-        if( queryResult.rows.length > 0 ){
-          callback(null, queryResult.rows);
-        }else{
-          callback(null, null);
-        }
+        callback(null, queryResult.rows);        
       }
     })
   }

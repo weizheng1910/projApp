@@ -1,4 +1,5 @@
 var React = require("react");
+var Layout = require('./layout.jsx');
 
 class EditTask extends React.Component {
   render() {
@@ -17,7 +18,10 @@ class EditTask extends React.Component {
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossOrigin="anonymous"/>
         </head>
         <body>
-          <h3>Task Edit</h3>
+        <Layout userid={this.props.userid}>
+          <div class="mx-3">
+            <h3>Edit Task</h3>
+          </div>
           <form action = {`/user/${this.props.owner}/editTask/${this.props.task.id}?_method=put`} method="POST">
 
             <div class="form-group col-md-6">
@@ -42,6 +46,7 @@ class EditTask extends React.Component {
                 {list}
               </select>
             </div>
+
             <div class="mx-3">
             <button type="submit" class="btn btn-success">Edit Task</button>
             </div>
@@ -55,6 +60,7 @@ class EditTask extends React.Component {
           </form>
           </div>
           
+          </Layout>
           
         </body>
       </html>

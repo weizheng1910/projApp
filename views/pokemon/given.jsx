@@ -82,8 +82,8 @@ class Given extends React.Component {
           
           <Layout userid={this.props.userid}>
 
-          <div className="mx-3">
-          <h3>Task Given</h3>
+          <div class="mx-3">
+            <h3>Tasks Given</h3>
           </div>
           <div className="overflow-auto">
           <table className="table">

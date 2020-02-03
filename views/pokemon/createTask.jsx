@@ -10,7 +10,12 @@ class CreateTask extends React.Component {
         return <option value={board.id}>{board.name}</option>
     })
 
-    let nextTaskId = parseInt(this.props.task.id) + 1
+    var nextTaskId 
+    if(this.props.task.id) {
+      nextTaskId = parseInt(this.props.task.id) + 1
+    } else {
+      nextTaskId = 1
+    }
     
     return (
       <html>

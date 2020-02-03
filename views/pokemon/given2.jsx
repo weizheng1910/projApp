@@ -22,18 +22,10 @@ class Project extends React.Component {
       let selectedBoardArray = boards.filter(bd => bd.id == boardid)
       let selectedBoard = selectedBoardArray[0]
 
+      var chunk; 
 
-
-      return (
-        <div class="card m-3" style={{width: 40 + 'rem'}} >
-          <div class="card-header">
-            <div class="d-flex justify-content-between">
-
-              <div class="text-secondary font-weight-bold">
-              {selectedBoard.name}
-              </div>
-
-              <div class="w-25 d-flex justify-content-between">
+      if (userid == selectedBoard.user_id){
+        chunk = <div class="w-25 d-flex justify-content-between">
 
                 <div class="mx-1">
                   <form action = {`/user/${userid}/editProj/${selectedBoard.id}`} method="GET">
@@ -48,7 +40,21 @@ class Project extends React.Component {
                 </div>
 
               </div>
+      } 
 
+
+
+      return (
+        <div class="card m-3" style={{width: 40 + 'rem'}} >
+          <div class="card-header">
+            <div class="d-flex justify-content-between">
+
+              <div class="text-secondary font-weight-bold">
+              {selectedBoard.name}
+              </div>
+
+              
+              {chunk}
 
 
             </div>

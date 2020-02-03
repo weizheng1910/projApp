@@ -134,14 +134,18 @@ ON y.board_id = boards.id`
       if( error ){
         callback(error, null);
       }else{
-        let query2 = `SELECT * FROM boards`
-        dbPoolInstance.query(query2,(error,queryResult2) => {
-          queryResult.rows.push(queryResult2.rows)
-          callback(null, queryResult.rows)
-        })
-      }
-    })
-  }
+        if(queryResult.rows.length == 0){
+         queryResult.rows = [[]] 
+        }
+          let query2 = `SELECT * FROM boards`
+          dbPoolInstance.query(query2,(error,queryResult2) => {
+            queryResult.rows.push(queryResult2.rows)
+            callback(null, queryResult.rows)
+          })
+        }
+      })
+    }
+  
 
   let submitCreatedTask = (callback,taskObject) => {
     const values = [taskObject.taskname,taskObject.createdAt,taskObject.dueDate,taskObject.user_id,taskObject.project]
@@ -247,9 +251,9 @@ ON y.board_id = boards.id`
     })//end query1
   }
 
-  let createNewProject = (callback,projObj) => {
-    const values = [projObj.projname,projObj.description]
-    let query = 'INSERT INTO boards(name,description) VALUES($1,$2) RETURNING *'
+  let createNewProject = (callback,projObj,userid) => {
+    const values = [projObj.projname,projObj.description,userid]
+    let query = 'INSERT INTO boards(name,description,user_id) VALUES($1,$2,$3) RETURNING *'
     dbPoolInstance.query(query,values,(error,queryResult) => {
       if(error){
         callback(error,"QueryError")

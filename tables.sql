@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS boards(
 	id SERIAL PRIMARY KEY,
 	name TEXT,
-	description TEXT
+	description TEXT,
+	user_id INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS tasks(

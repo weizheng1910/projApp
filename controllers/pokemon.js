@@ -220,7 +220,7 @@ module.exports = (db) => {
       response.redirect('/user/'+userid+'/projectOverview')
     }
 
-    db.pokemon.createNewProject(callback,request.body)
+    db.pokemon.createNewProject(callback,request.body,userid)
   }
 
   let projOverview = (request,response) => {

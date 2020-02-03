@@ -11,7 +11,7 @@ module.exports = (dbPoolInstance) => {
 
   let tasksReceived = (callback,id) => {
     const values = [id]
-    let query = `SELECT task_id, taskname, name AS reqbyusername, requestid, boardname, createdat, duedate, doneyet FROM users INNER JOIN (SELECT requestedbyuser,requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet FROM boards INNER JOIN
+    let query = `SELECT task_id, taskname, name AS reqbyusername, requestid, board_id, boardname, createdat, duedate, doneyet FROM users INNER JOIN (SELECT requestedbyuser,requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet FROM boards INNER JOIN
 (SELECT user_id AS requestedbyuser, requestid, board_id, task_id, name AS taskname, createdat, duedate, doneyet FROM tasks INNER JOIN
 (SELECT user_id AS yourid, id AS requestID, task_id, doneyet FROM requests WHERE user_id = $1) AS x ON x.task_id = tasks.id) AS y ON y.board_id = boards.id) AS z ON z.requestedbyuser =  users.id`
 
@@ -19,7 +19,17 @@ module.exports = (dbPoolInstance) => {
       if( error ){
         callback(error, null);
       }else{
-        callback(null, queryResult.rows);
+        let query2 = 'SELECT * FROM boards'
+        dbPoolInstance.query(query2,(error,queryResult2) => {
+          queryResult.rows.unshift(queryResult2.rows)
+
+          let query3 = 'SELECT name FROM users WHERE id=$1'
+          dbPoolInstance.query(query3,values,(error,queryResult3) => {
+            queryResult.rows.unshift(queryResult3.rows)
+          callback(null, queryResult.rows);
+
+          })
+        })
       }
     })
   }
@@ -251,7 +261,7 @@ ON y.board_id = boards.id`
 
   let seeAllTasksFromProject = (callback) => {
     
-    let query = 'SELECT tasks.id AS task_id, tasks.name AS taskname, createdat, duedate, users.name AS username, board_id FROM tasks INNER JOIN users ON users.id = tasks.user_id'
+    let query = 'SELECT tasks.id AS task_id, tasks.name AS taskname, tasks.user_id AS ownerid,createdat, duedate, users.name AS username, board_id FROM tasks INNER JOIN users ON users.id = tasks.user_id'
 
     dbPoolInstance.query(query,(error,queryResult) => {
       if(error){

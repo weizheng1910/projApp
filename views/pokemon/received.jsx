@@ -4,25 +4,68 @@ var Layout = require('./layout.jsx')
 class Received extends React.Component {
   render() {
 
-    console.log(this.props.result)
-    var list = this.props.result.map(task => {
-      return <tr>
-                <td>{task.task_id}</td>
-                <td>{task.taskname}</td>
-                <td>{task.reqbyusername}</td>
-                
-                <td>{task.boardname}</td>
-                <td>{task.createdat}</td>
-                <td>{task.duedate}</td>
-                <td>{task.doneyet}</td>
-                <td>
-                  <form action={`/toggleDone/${task.requestid}`} method='GET'>
-                    <button type='submit' className="btn text-white font-weight-bold" style={{backgroundColor:'#3b5998'}} id= {task.requestid}  >Done</button>
-                  </form>
-                </td>
-             </tr>
-    })
-    console.log(this.props.result);
+      var results = this.props.resultArray;
+      var boards = this.props.boards;
+
+        
+     //refactor doneyet later
+    
+    var list = this.props.resultArray.map(function(tasks,index) {
+      return <div class="card m-3" style={{width: 50 + 'rem'}} >
+          <div class="card-header">
+        
+          <h3>{boards[index].name}</h3>
+          <p>{boards[index].description}</p>
+        </div>
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Task ID</th>
+            <th scope="col">Task Name</th>
+            <th scope="col">Assigned By</th>
+            <th scope="col">Client</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Done yet</th>
+          </tr>
+        </thead>
+          <tbody>
+      {tasks.map(x => { 
+
+          var doneyet;
+
+                    if(x.doneyet == "Yes"){
+                    doneyet = <form action={`/toggleDone/${x.requestid}`} method='GET'>
+                      <button type='submit' className="btn text-white font-weight-bold" style={{backgroundColor:'#3b5998'}} id= {x.requestid}  >Yes</button>
+                    </form>
+                    } else {
+                        doneyet = 
+                      <form action={`/toggleDone/${x.requestid}`} method='GET'>
+                      <button type='submit' className="btn btn-secondary text-white font-weight-bold " id= {x.requestid}  >No</button>
+                    </form>
+                    }
+
+        return <tr>
+                  <td>{x.task_id}</td>  
+                  <td>{x.taskname}</td>
+                  <td>{x.reqbyusername}</td>
+                  <td>{x.boardname}</td>
+                  <td>{x.createdat}</td>
+                  <td>{x.duedate}</td>
+                  
+                  <td>
+                  {doneyet}
+                  </td>
+                </tr>
+    })}
+    </tbody>
+    </table>
+    </div>
+  })
+      
+
+
+
     return (
       <html>
         <head>
@@ -31,29 +74,13 @@ class Received extends React.Component {
         <body>
         
         <Layout userid={this.props.userid}>
-
-          <div class="mx-3">
-            <h3>Tasks Received</h3>
+            <div class="mx-3">
+            <h3>Welcome, {this.props.username}</h3>
+            <h4>These are the tasks assigned to you</h4>
+            </div>
+          <div class="d-flex justify-content-around flex-wrap">
+          {list}
           </div>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Task ID</th>
-                <th scope="col">Task Name</th>
-                <th scope="col">Requested By</th>
-                
-                <th scope="col">Project Name</th>
-                <th scope="col">Date Created</th>
-                <th scope="col">Date Due</th>
-                <th scope="col">Done yet</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {list}
-            </tbody>
-          </table>
-          
           </Layout>
         </body>
       </html>

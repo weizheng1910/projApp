@@ -15,10 +15,32 @@ module.exports = (db) => {
   let received = (request, response) => {
     let id = request.params.id
     const callback = (err,result) => {
-      const data = {
-        result: result,
-        userid: id
+
+      let username = result[0][0].name
+      let boards = result[1]
+      let results = result.slice(2)
+
+
+      let boardArray = boards.map(board => {return board.id})
+
+      let resultArray = []
+
+      for(let i = 0; i < boardArray.length; i++){
+        let subArray = results.filter(el => el.board_id == boardArray[i])
+        resultArray.push(subArray)
       }
+
+      
+
+
+
+      const data = {
+        boards: boards,
+        resultArray: resultArray,
+        userid: id,
+        username: username
+      }
+        
         response.render('pokemon/received',data)
       }
     db.pokemon.tasksReceived(callback,id)
@@ -27,13 +49,36 @@ module.exports = (db) => {
   let given = (request, response) => {
     let id = request.params.id
     const callback = (err,result) => {
-      const data = {
-        result: result,
-        userid: id
-      }
-        response.render('pokemon/given',data)
-      }
-    db.pokemon.tasksGiven(callback,id)
+
+        let requestsWithAssigneeName = result[0]
+        let boards = result[1]
+        let boardArray = boards.map(board => {return board.id})
+        let tasks = result.slice(2)
+
+        let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
+        let tasksUserName = tasksOfThisUserId[0].username
+        
+        let resultArray = []
+
+        for(let i = 0; i < boardArray.length; i++){
+          let subArray = tasksOfThisUserId.filter(el => el.board_id == boardArray[i])
+          resultArray.push(subArray)
+        }
+
+
+
+        const data = {
+          result: resultArray,
+          boards: boards,
+          userid: id,
+          requestsWithAssigneeName: requestsWithAssigneeName,
+          username: tasksUserName
+        }
+     response.render('pokemon/given2',data)
+          
+    }
+
+    db.pokemon.seeAllTasksFromProject(callback)
   }
 
   let toggleDone = (request,response) => {

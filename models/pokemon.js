@@ -77,7 +77,7 @@ ON y.board_id = boards.id`
       if( error ){
         callback(error, null);
       }else{
-        callback(null, queryResult.rows);        
+          callback(null, queryResult.rows);        
       }
     })
   }
@@ -307,7 +307,12 @@ ON y.board_id = boards.id`
           let query3 = 'SELECT task_id, user_id, name, doneYet FROM requests INNER JOIN users ON requests.user_id = users.id'
           dbPoolInstance.query(query3,(error,queryResult3) => {
             queryResult.rows.unshift(queryResult3.rows)
-            callback(null,queryResult.rows)
+
+            let query4 = 'SELECT * FROM users'
+            dbPoolInstance.query(query4,(error,queryResult4) => {
+              queryResult.rows.unshift(queryResult4.rows)
+              callback(null,queryResult.rows)
+            })
           })
         })        
       }

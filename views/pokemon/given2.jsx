@@ -8,7 +8,7 @@ class Project extends React.Component {
 
    var boards = this.props.boards;
    var userid = this.props.userid;
-   var username = this.props.username;
+   var username = this.props.theName;
    var requestsWithAssigneeName = this.props.requestsWithAssigneeName;
 
    var dateNow = new Date()

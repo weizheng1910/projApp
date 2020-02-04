@@ -114,21 +114,28 @@ module.exports = (db) => {
     if(sha256(id + SALT) == currentSessionCookie){
         const callback = (err,result) => {
 
-            let requestsWithAssigneeName = result[0]
-            let boards = result[1]
+            let usersArray = result[0]
+            let userArray = result[0].filter( f => f.id == id)
+            let theName = userArray[0].name
+
+
+            let requestsWithAssigneeName = result[1]
+            let boards = result[2]
             let boardArray = boards.map(board => {return board.id})
-            let tasks = result.slice(2)
+            let tasks = result.slice(3)
 
             let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
-            var tasksUserName 
+            
+            // var tasksUserName 
 
-            if(tasksOfThisUserId.length == 0){
-              tasksUserName = ""
-            } else {
-              tasksUserName = tasksOfThisUserId[0].username
-            }
+            // if(tasksOfThisUserId.length == 0){
+            //   tasksUserName = ""
+            // } else {
+            //   tasksUserName = tasksOfThisUserId[0].username
+            // }
             
-            
+            console.log(theName)
+
             let resultArray = []
 
             for(let i = 0; i < boardArray.length; i++){
@@ -141,7 +148,7 @@ module.exports = (db) => {
               boards: boards,
               userid: id,
               requestsWithAssigneeName: requestsWithAssigneeName,
-              username: tasksUserName
+              theName: theName
             }
          response.render('pokemon/given2',data)
               
@@ -322,10 +329,14 @@ module.exports = (db) => {
 
         const callback = (err,result) => {
 
-            let requestsWithAssigneeName = result[0]
-            let boards = result[1]
+            let names = result[0]
+            let requestsWithAssigneeName = result[1]
+            let boards = result[2]
             let boardArray = boards.map(board => {return board.id})
-            let tasks = result.slice(2)
+            let tasks = result.slice(3)
+
+            let username = names.filter(n => n.id == userid)
+            let theName = username[0].name
             
             let resultArray = []
 
@@ -338,7 +349,8 @@ module.exports = (db) => {
               result: resultArray,
               boards: boards,
               userid: userid,
-              requestsWithAssigneeName: requestsWithAssigneeName
+              requestsWithAssigneeName: requestsWithAssigneeName,
+              theName: theName
             }
             response.render('pokemon/project',data)     
         }

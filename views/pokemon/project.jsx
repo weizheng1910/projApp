@@ -179,6 +179,7 @@ class Project extends React.Component {
         <Layout userid={this.props.userid}>
 
           <div class="mx-4">
+          <h3>Welcome, {this.props.theName}</h3>
           <h3>Project Overview</h3>
           </div>
           

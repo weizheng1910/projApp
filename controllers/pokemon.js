@@ -20,7 +20,6 @@ module.exports = (db) => {
       let boards = result[1]
       let results = result.slice(2)
 
-
       let boardArray = boards.map(board => {return board.id})
 
       let filteredResults = results.filter(e => e.yourid == id)
@@ -31,10 +30,6 @@ module.exports = (db) => {
         let subArray = filteredResults.filter(el => el.board_id == boardArray[i])
         resultArray.push(subArray)
       }
-
-      
-
-
 
       const data = {
         boards: boards,
@@ -73,8 +68,6 @@ module.exports = (db) => {
           let subArray = tasksOfThisUserId.filter(el => el.board_id == boardArray[i])
           resultArray.push(subArray)
         }
-
-
 
         const data = {
           result: resultArray,
@@ -249,8 +242,6 @@ module.exports = (db) => {
           resultArray.push(subArray)
         }
 
-
-
         const data = {
           result: resultArray,
           boards: boards,
@@ -281,7 +272,6 @@ module.exports = (db) => {
     let boardid = request.params.boardid
 
     const callback = (err,result) => {
-
       response.redirect(`/user/${userid}/projectOverview/`)
     }
 

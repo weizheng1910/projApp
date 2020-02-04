@@ -54,7 +54,7 @@ class Project extends React.Component {
               </div>
 
               
-              {chunk}
+             
 
 
             </div>

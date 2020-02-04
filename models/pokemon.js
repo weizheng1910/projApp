@@ -351,7 +351,7 @@ ON y.board_id = boards.id`
 
   let submitEditProj = (callback,projObj,projId)=> {
 
-    const values = [projObj.projname,projObj.description,projId]   
+    const values = [projObj.projname,projObj.description,projId]
 
     let query = `UPDATE boards SET name=$1, description=$2 WHERE id=$3`
 

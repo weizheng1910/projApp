@@ -36,7 +36,7 @@ class Layout extends React.Component {
                     <a class="nav-link mx-1 px-1 text-white font-weight-light" href={`/user/${this.props.userid}/received`}>Tasks Received</a>
                   </form>
 
-                  
+                  <button type="button" class="btn btn-secondary">Log out</button>
 
                 </div>
               </nav>          

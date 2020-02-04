@@ -1,5 +1,6 @@
-
+var sha256 = require('js-sha256');
 var moment = require('moment');
+
 module.exports = (db) => {
 
   /**
@@ -7,13 +8,71 @@ module.exports = (db) => {
    * Controller logic
    * ===========================================
    */
+   const SALT = "strawberries are blue"
 
    let home = (request,response) => {
     response.render('pokemon/home')
    }
 
+   let logout = (request,response) => {
+    response.clearCookie('loggedin')
+    response.redirect("/")
+   }
+
+  let submitLogin = (request,response) => {
+    let username = request.body.username
+    let password = request.body.password
+    
+    console.log("submitted us is "+username)
+    console.log("submitted pw is "+password)
+
+    const callback = (err,result) => {
+      if(result == "No results found"){
+        console.log("No username found")
+        response.redirect("/")
+      } else if( result == "Query error") {
+        console.log("query erroe")
+        response.redirect("/")
+      } else {
+        let id = result[0].id
+        //Once registered, set cookies.
+        response.cookie('loggedin',sha256(id + SALT))
+        
+        response.redirect('/user/'+id+'/projectOverview/')
+      }
+    }
+
+    db.pokemon.submitLogin(callback,username,password)
+  }
+
+  let submitNewUser = (request,response) => {
+    let username = request.body.username
+    let password = sha256(request.body.password)
+
+    // response.cookie('loggedin',sha256())
+
+    
+
+    const callback = (err,result) => {
+      let id = result[0].id
+      //Once registered, set cookies.
+
+      response.cookie('loggedin',sha256(id + SALT))
+
+      response.redirect('/user/'+id+'/projectOverview/')
+    }
+
+    db.pokemon.submitNewUser(callback,username,password)
+  }
+
   let received = (request, response) => {
     let id = request.params.id
+
+    let currentSessionCookie = request.cookies['loggedin']
+
+
+    if(sha256(id + SALT) == currentSessionCookie){
+
     const callback = (err,result) => {
 
       let username = result[0][0].name
@@ -41,46 +100,60 @@ module.exports = (db) => {
         response.render('pokemon/received',data)
       }
     db.pokemon.tasksReceived(callback,id)
+  } else{
+    response.redirect("/")
   }
+}
 
   let given = (request, response) => {
     let id = request.params.id
-    const callback = (err,result) => {
+    
+    let currentSessionCookie = request.cookies['loggedin']
 
-        let requestsWithAssigneeName = result[0]
-        let boards = result[1]
-        let boardArray = boards.map(board => {return board.id})
-        let tasks = result.slice(2)
 
-        let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
-        var tasksUserName 
+    if(sha256(id + SALT) == currentSessionCookie){
+        const callback = (err,result) => {
 
-        if(tasksOfThisUserId.length == 0){
-          tasksUserName = ""
-        } else {
-          tasksUserName = tasksOfThisUserId[0].username
+            let requestsWithAssigneeName = result[0]
+            let boards = result[1]
+            let boardArray = boards.map(board => {return board.id})
+            let tasks = result.slice(2)
+
+            let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
+            var tasksUserName 
+
+            if(tasksOfThisUserId.length == 0){
+              tasksUserName = ""
+            } else {
+              tasksUserName = tasksOfThisUserId[0].username
+            }
+            
+            
+            let resultArray = []
+
+            for(let i = 0; i < boardArray.length; i++){
+              let subArray = tasksOfThisUserId.filter(el => el.board_id == boardArray[i])
+              resultArray.push(subArray)
+            }
+
+            const data = {
+              result: resultArray,
+              boards: boards,
+              userid: id,
+              requestsWithAssigneeName: requestsWithAssigneeName,
+              username: tasksUserName
+            }
+         response.render('pokemon/given2',data)
+              
         }
-        
-        
-        let resultArray = []
 
-        for(let i = 0; i < boardArray.length; i++){
-          let subArray = tasksOfThisUserId.filter(el => el.board_id == boardArray[i])
-          resultArray.push(subArray)
-        }
+        db.pokemon.seeAllTasksFromProject(callback)
 
-        const data = {
-          result: resultArray,
-          boards: boards,
-          userid: id,
-          requestsWithAssigneeName: requestsWithAssigneeName,
-          username: tasksUserName
-        }
-     response.render('pokemon/given2',data)
-          
-    }
+      } else {
+        console.log("You are not allowed.")
+        response.redirect('/')
+      }
 
-    db.pokemon.seeAllTasksFromProject(callback)
   }
 
   let toggleDone = (request,response) => {
@@ -124,15 +197,22 @@ module.exports = (db) => {
 
   let createTask = (request,response) => {
     let userid = request.params.id 
-    const callback = (err,result) => {
-      const data = {
-        task: result[0],
-        allBoards: result[1],
-        userid: userid
+
+    let currentSessionCookie = request.cookies['loggedin']
+
+    if(sha256(userid + SALT) == currentSessionCookie){ 
+        const callback = (err,result) => {
+          const data = {
+            task: result[0],
+            allBoards: result[1],
+            userid: userid
+          }
+          response.render('pokemon/createTask',data)
+        }
+        db.pokemon.findLatestTask(callback)
+      } else {
+        response.redirect("/")
       }
-      response.render('pokemon/createTask',data)
-    }
-    db.pokemon.findLatestTask(callback)
   }
 
   let submitCreatedTask = (request,response) => {
@@ -209,10 +289,17 @@ module.exports = (db) => {
   let displayProjectForm = (request,response) => {
     let userid = request.params.userid
 
+    let currentSessionCookie = request.cookies['loggedin']
+
+    if(sha256(userid + SALT) == currentSessionCookie){ 
+
     const data = {
       userid:userid
     }
     response.render('pokemon/createProj',data)
+  } else {
+    response.render('/')
+  }
   }
 
   let submitNewProject = (request,response) => {
@@ -228,32 +315,37 @@ module.exports = (db) => {
   let projOverview = (request,response) => {
     let userid = request.params.userid
     
-    const callback = (err,result) => {
+    let currentSessionCookie = request.cookies['loggedin']
 
-        let requestsWithAssigneeName = result[0]
-        let boards = result[1]
-        let boardArray = boards.map(board => {return board.id})
-        let tasks = result.slice(2)
-        
-        let resultArray = []
 
-        for(let i = 0; i < boardArray.length; i++){
-          let subArray = tasks.filter(el => el.board_id == boardArray[i])
-          resultArray.push(subArray)
+    if(sha256(userid + SALT) == currentSessionCookie){
+
+        const callback = (err,result) => {
+
+            let requestsWithAssigneeName = result[0]
+            let boards = result[1]
+            let boardArray = boards.map(board => {return board.id})
+            let tasks = result.slice(2)
+            
+            let resultArray = []
+
+            for(let i = 0; i < boardArray.length; i++){
+              let subArray = tasks.filter(el => el.board_id == boardArray[i])
+              resultArray.push(subArray)
+            }
+
+            const data = {
+              result: resultArray,
+              boards: boards,
+              userid: userid,
+              requestsWithAssigneeName: requestsWithAssigneeName
+            }
+            response.render('pokemon/project',data)     
         }
-
-        const data = {
-          result: resultArray,
-          boards: boards,
-          userid: userid,
-          requestsWithAssigneeName: requestsWithAssigneeName
-        }
-
-        response.render('pokemon/project',data)
-          
-    }
-
-    db.pokemon.seeAllTasksFromProject(callback)
+          db.pokemon.seeAllTasksFromProject(callback)
+    } else {
+      response.redirect("/")
+      }
   }
 
   let deleteTask = (request,response) => {
@@ -318,7 +410,10 @@ module.exports = (db) => {
    */
   return {
     home:home,
+    logout: logout,
     received: received,
+    submitNewUser: submitNewUser,
+    submitLogin: submitLogin,
     given: given,
     toggleDone: toggleDone,
     editTask: editTask,

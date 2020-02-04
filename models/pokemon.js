@@ -6,7 +6,32 @@
 module.exports = (dbPoolInstance) => {
 
   // `dbPoolInstance` is accessible within this function scope
+  let submitNewUser = (callback,username,password) => {
+    const values = [username,password]
+    let query = 'INSERT INTO users(name,password) VALUES($1,$2) RETURNING *'
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      callback(null,queryResult.rows)
+    })
+  }
 
+  let submitLogin = (callback,username,password) => {
+    const values = [username]
+    console.log("submit username is "+username)
+    let query = 'SELECT * FROM users WHERE name=$1'
+    dbPoolInstance.query(query,values,(error,queryResult) => {
+      if(error){
+        callback(error,"Query error")
+      } else {
+
+        if(queryResult.rows.length == 0){
+          callback(error,"No results found")
+        } else {
+          callback(null,queryResult.rows)
+        }
+
+      }
+    })
+  }
  
 
   let tasksReceived = (callback,id) => {
@@ -367,7 +392,9 @@ ON y.board_id = boards.id`
   return {
     
     tasksReceived: tasksReceived,
+    submitLogin: submitLogin,
     tasksGiven: tasksGiven,
+    submitNewUser: submitNewUser,
     toggleDone: toggleDone,
     editTask: editTask,
     submitEditTask: submitEditTask,

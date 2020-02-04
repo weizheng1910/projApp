@@ -33,7 +33,7 @@ class Home extends React.Component {
                   <div class = "col">
                     <div class="form-group col-md-6">
                       <label>Password</label>
-                      <input type="password" class="form-control"/>
+                      <input type="password" name="password" class="form-control"/>
                     </div>
                   </div>
 
@@ -64,7 +64,7 @@ class Home extends React.Component {
 
                   <div class="form-group col-md-6">
                     <label>Password</label>
-                    <input type="password" class="form-control"/>
+                    <input type="password" name="password" class="form-control"/>
                   </div>
 
                   <div class="m-3">

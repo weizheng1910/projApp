@@ -31,6 +31,12 @@ module.exports = (app, allModels) => {
 
   app.get('/user/:userid/createProject', pokemonControllerCallbacks.displayProjectForm)
 
+  app.get('/logout', pokemonControllerCallbacks.logout)
+
+  app.post('/login',pokemonControllerCallbacks.submitLogin)
+  app.post('/createNewUser', pokemonControllerCallbacks.submitNewUser)
+
+
   app.post('/user/:userid/createProject', pokemonControllerCallbacks.submitNewProject)
 
   app.post('/user/:userid/task/:taskid/submitRequest', pokemonControllerCallbacks.submitRequest)

@@ -11,8 +11,8 @@ module.exports = (dbPoolInstance) => {
 
   let tasksReceived = (callback,id) => {
     const values = [id]
-    let query = `SELECT task_id, taskname, name AS reqbyusername, requestid, board_id, boardname, createdat, duedate, doneyet FROM users INNER JOIN (SELECT requestedbyuser,requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet FROM boards INNER JOIN
-(SELECT user_id AS requestedbyuser, requestid, board_id, task_id, name AS taskname, createdat, duedate, doneyet FROM tasks INNER JOIN
+    let query = `SELECT task_id, yourid, taskname, name AS reqbyusername, requestid, board_id, boardname, createdat, duedate, doneyet FROM users INNER JOIN (SELECT requestedbyuser, yourid, requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet FROM boards INNER JOIN
+(SELECT user_id AS requestedbyuser, yourid, requestid, board_id, task_id, name AS taskname, createdat, duedate, doneyet FROM tasks INNER JOIN
 (SELECT user_id AS yourid, id AS requestID, task_id, doneyet FROM requests WHERE user_id = $1) AS x ON x.task_id = tasks.id) AS y ON y.board_id = boards.id) AS z ON z.requestedbyuser =  users.id`
 
   dbPoolInstance.query(query,values,(error, queryResult) => {
@@ -179,6 +179,10 @@ ON y.board_id = boards.id`
   let submitRequest = (callback,requestObj) => {
     const task_id = requestObj.task_id
     let userchoices = requestObj.userchoices
+    if(!userchoices){
+      callback(null,[])
+    }
+
     let query = 'INSERT INTO requests(task_id,user_id,doneYet) VALUES '
 
     for(let i = 0; i < userchoices.length; i++){
@@ -271,7 +275,7 @@ ON y.board_id = boards.id`
       if(error){
         callback(error,"QueryError")
       } else {
-        let query2 = 'SELECT * FROM boards'
+        let query2 = 'SELECT boards.id AS id, boards.name AS name, boards.description AS description, boards.user_id AS user_id, users.name AS projownername FROM boards INNER JOIN users ON boards.user_id = users.id'
         dbPoolInstance.query(query2,(error,queryResult2) => {
           queryResult.rows.unshift(queryResult2.rows)
 

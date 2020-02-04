@@ -60,3 +60,11 @@ SELECT task_id, taskname, name AS reqbyusername, requestid, board_id, boardname,
 
 
 */
+
+/*
+SELECT task_id, yourid, taskname, name AS reqbyusername, requestid, board_id, boardname, createdat, duedate, doneyet FROM users INNER JOIN (SELECT requestedbyuser, yourid, requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet FROM boards INNER JOIN
+(SELECT user_id AS requestedbyuser, yourid, requestid, board_id, task_id, name AS taskname, createdat, duedate, doneyet FROM tasks INNER JOIN
+(SELECT user_id AS yourid, id AS requestID, task_id, doneyet FROM requests WHERE user_id = 3) AS x ON x.task_id = tasks.id) AS y ON y.board_id = boards.id) AS z ON z.requestedbyuser =  users.id
+
+
+*/

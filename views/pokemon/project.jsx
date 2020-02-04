@@ -13,16 +13,11 @@ class Project extends React.Component {
    var dateNow = new Date()
 
     var list = this.props.result.map(function(tasks,index) {
-      return (
-        <div class="card m-3" style={{width: 35 + 'rem'}} >
-          <div class="card-header">
-            <div class="d-flex justify-content-between">
+      
+      var editAndDeleteProjButton
 
-              <div class="text-secondary font-weight-bold">
-              {boards[index].name}
-              </div>
-
-              <div class="w-25 d-flex justify-content-between">
+      if(boards[index].user_id == userid){
+        editAndDeleteProjButton = <div class="w-25 d-flex justify-content-between">
 
                 <div class="mx-1">
                   <form action = {`/user/${userid}/editProj/${boards[index].id}`} method="GET">
@@ -37,6 +32,25 @@ class Project extends React.Component {
                 </div>
 
               </div>
+      } else {
+
+        editAndDeleteProjButton = <div class="w-25 m-0"><p align="right">Owned by {boards[index].projownername}</p></div>
+      }
+
+
+
+
+      return (
+        <div class="card m-3" style={{width: 35 + 'rem'}} >
+          <div class="card-header">
+            <div class="d-flex justify-content-between">
+
+              <div class="text-secondary font-weight-bold">
+              {boards[index].name}
+              </div>
+
+
+              {editAndDeleteProjButton}
 
 
 

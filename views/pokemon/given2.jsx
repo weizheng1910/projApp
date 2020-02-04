@@ -193,9 +193,9 @@ class Project extends React.Component {
                       <div class="w-75">
                         {task.taskname}
                         <br></br>                        
-                        <small>Assigned by {task.username} on {task.createdat} </small>
+                        <small>Created on: {task.createdat} </small>
                         <br></br>
-                        <small>To {string} </small>                    
+                        <small>Assigned to: {string} </small>                    
                         <br></br>
                         <small>Unattempted: {string2}</small>
                          <br></br>

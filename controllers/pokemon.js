@@ -23,10 +23,12 @@ module.exports = (db) => {
 
       let boardArray = boards.map(board => {return board.id})
 
+      let filteredResults = results.filter(e => e.yourid == id)
+
       let resultArray = []
 
       for(let i = 0; i < boardArray.length; i++){
-        let subArray = results.filter(el => el.board_id == boardArray[i])
+        let subArray = filteredResults.filter(el => el.board_id == boardArray[i])
         resultArray.push(subArray)
       }
 
@@ -56,7 +58,14 @@ module.exports = (db) => {
         let tasks = result.slice(2)
 
         let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
-        let tasksUserName = tasksOfThisUserId[0].username
+        var tasksUserName 
+
+        if(tasksOfThisUserId.length == 0){
+          tasksUserName = ""
+        } else {
+          tasksUserName = tasksOfThisUserId[0].username
+        }
+        
         
         let resultArray = []
 

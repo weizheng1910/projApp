@@ -4,18 +4,24 @@ var Layout = require('./layout.jsx')
 class Received extends React.Component {
   render() {
 
-      var results = this.props.resultArray;
       var boards = this.props.boards;
 
-        
-     //refactor doneyet later
+      var res = this.props.resultArray.filter(tk => tk.length > 0);
+      
+     
     
-    var list = this.props.resultArray.map(function(tasks,index) {
+    var list = res.map(function(tasks,index) {
+
+      let boardid = tasks[0].board_id;
+      let selectedBoardArray = boards.filter(bd => bd.id == boardid);
+      let selectedBoard = selectedBoardArray[0]
+
+
       return <div class="card m-3" style={{width: 50 + 'rem'}} >
           <div class="card-header">
         
-          <h3>{boards[index].name}</h3>
-          <p>{boards[index].description}</p>
+          <h3>{selectedBoard.name}</h3>
+          <p>{selectedBoard.description}</p>
         </div>
         <table class="table">
         <thead>

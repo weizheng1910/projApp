@@ -1,5 +1,7 @@
 ProjApp
 
+Background:
+
 After working in Investment Operations for a year, I realised that it is difficult to stay on top of the tasks we have to do. Sometimes we can only work on a task after a team member has completed his or her part, and vice versa.
 
 In Investment Banking Operations where there are multiple trade issues from different counterparties going on at any point in time, such instances of task interdependence are many, and noting them down on pen and paper is tedious and messy. 

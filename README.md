@@ -16,7 +16,7 @@ To sum up, this app aims to address information failure, reducing key person ris
 
  ### Process:
  
- 1. Drawing up the ERD. Refer to it in the repo. - **[Brainstorming](/ProjApp ERD.png)**
+ 1. Drawing up the ERD. Refer to it in the repo. - **[ERD](/ProjApp ERD.png)**
  2. Coming up with UX WireFrames for the App. 
  3. Planning out complex SQL Queries based on what is required in the wireframes.
  4. Coding and testing. 

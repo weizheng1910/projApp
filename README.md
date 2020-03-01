@@ -1,6 +1,6 @@
-ProjApp
+### ProjApp
 
-Background:
+## Background:
 
 After working in Investment Operations for a year, I realised that it is difficult to stay on top of the tasks we have to do. Sometimes we can only work on a task after a team member has completed his or her part, and vice versa.
 
@@ -14,14 +14,14 @@ All of these tasks and issues are condensed into a single page so that every tea
 
 To sum up, this app aims to address information failure, reducing key person risk within the team.  
 
- Process:
+ ## Process:
  
  1. Drawing up the ERD. Refer to it in the repo.
  2. Coming up with UX WireFrames for the App. 
  3. Planning out complex SQL Queries based on what is required in the wireframes.
  4. Coding and testing. 
  
- Things which I can improve on: 
+ ## Things which I can improve on: 
  
  1. Planning the User Flow. Feedback from my instructors and TAs were that the User Flow was messy. This is because I have not given thought to it.
  2. Neater code, due to short duration given to complete the project, ample consideration was not given to code restructure and readability. Refactoring process is now ongoing. 

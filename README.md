@@ -8,8 +8,8 @@ A manager, or any team member for that matter, is also not able to stay up to da
 
 ProjApp is a task management app which aims to resolve this issue. It serves as a central platform where team members can notify the tasks they have for each other, categorised according to the trading counterparty. They can also highlight pertinent issues they have, or give notifications of the things others have to be mindful about when dealing with a particular counterparty.
 
-All of these tasks and issues are condensed into a single page so that every team member (not only the manager) can have a macro view updated of everything going on. Any team member will be able to easily step in and deal with a client, when the go-to person isn't around. Less meetings or phone calls will be necessary.  
+All of these tasks and issues are condensed into a single page so that every team member (not only the manager) can instantly have a macro view updated of everything going on. Any team member will be able to easily step in and deal with a client, when the go-to person isn't around. Less meetings or phone calls will be necessary.  
 
-To sum up, this app aims to address information failure in Investment Banking Operations, in turn improving productivity and efficiency within the team.  
+To sum up, this app aims to address information failure, reducing key person risk within the team.  
 
  

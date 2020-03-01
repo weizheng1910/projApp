@@ -24,6 +24,9 @@ To sum up, this app aims to address information failure, reducing key person ris
  1. Planning the User Flow. Feedback from my instructors and TAs were that the User Flow was messy. For future projects I will give on the user flow. 
  2. Neater code, due to short duration given to complete the project, ample consideration was not given to code restructure and readability. Refactoring process is now ongoing. 
  3. Theme originality. Color theme was a replica of Facebook's. I copied Facebook because it looks neat and vibrant. In the future, I will put in more effort in color theme. 
- 4. Features. Features on hindsight could be improved upon to better suit the needs of the end-user. For example:
-   There could be a separate category to display only reminders of the things to look out for when dealing with a particular client. 
-   For task reminders like meetings, there could be a notification, and then the task will be automatically cleared from the    application. More thought should be given to the features and how it caters to the end user. 
+ 4. Features. Features on hindsight could be improved upon to better suit the needs of the end-user. 
+    Additional features could include:
+   - A separate category to display only reminders of the things to look out for when dealing with a particular client. 
+   - For task reminders like meetings,  the task could be automatically cleared from the application when it reaches the deadline. 
+   
+   More thought should be given to the features and how it caters to the end user. 

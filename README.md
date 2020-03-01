@@ -21,7 +21,7 @@ To sum up, this app aims to address information failure, reducing key person ris
  
  Things which I can improve on: 
  
- 1. Planning the User Flow. Feedback from my instructors and TAs were that the User Flow was messy. For future projects I will give on the user flow. 
+ 1. Planning the User Flow. Feedback from my instructors and TAs were that the User Flow was messy. This is because I have not given thought to it.
  2. Neater code, due to short duration given to complete the project, ample consideration was not given to code restructure and readability. Refactoring process is now ongoing. 
  3. Theme originality. Color theme was a replica of Facebook's. I copied Facebook because it looks neat and vibrant. In the future, I will put in more effort on the color theme. 
  4. Features. Features on hindsight could be improved upon to better suit the needs of the end-user. 

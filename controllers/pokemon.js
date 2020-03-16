@@ -37,11 +37,16 @@ module.exports = (db) => {
         console.log("query error")
         response.redirect("/")
       } else {
-        let id = result[0].id
-        //Once registered, set cookies.
-        response.cookie('loggedin',sha256(id + SALT))
-        // And redirect to projectOverview page.
-        response.redirect('/user/'+id+'/projectOverview/')
+        // Login if password matches, if not redirect to homepage
+        if (result[0].password == sha256(password)){
+          let id = result[0].id
+          //Once registered, set cookies.
+          response.cookie('loggedin',sha256(id + SALT))
+          // And redirect to projectOverview page.
+          response.redirect('/user/'+id+'/projectOverview/')
+        } else {
+          response.redirect("/")
+        }
       }
     }
     db.pokemon.submitLogin(callback,username,password)

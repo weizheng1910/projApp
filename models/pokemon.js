@@ -22,13 +22,11 @@ module.exports = (dbPoolInstance) => {
       if(error){
         callback(error,"Query error")
       } else {
-
         if(queryResult.rows.length == 0){
           callback(error,"No results found")
         } else {
           callback(null,queryResult.rows)
         }
-
       }
     })
   }
@@ -36,6 +34,7 @@ module.exports = (dbPoolInstance) => {
 
   let tasksReceived = (callback,id) => {
     const values = [id]
+    // This query returns the tasks assigned to this user, including information of the board, and information on the user which requested the task.
     let query = `SELECT task_id, yourid, taskname, name AS reqbyusername, requestid, board_id, boardname, createdat, duedate, doneyet FROM users INNER JOIN (SELECT requestedbyuser, yourid, requestid, board_id, task_id, name AS boardname,taskname, createdat, duedate, doneyet FROM boards INNER JOIN
 (SELECT user_id AS requestedbyuser, yourid, requestid, board_id, task_id, name AS taskname, createdat, duedate, doneyet FROM tasks INNER JOIN
 (SELECT user_id AS yourid, id AS requestID, task_id, doneyet FROM requests WHERE user_id = $1) AS x ON x.task_id = tasks.id) AS y ON y.board_id = boards.id) AS z ON z.requestedbyuser =  users.id`
@@ -52,7 +51,6 @@ module.exports = (dbPoolInstance) => {
           dbPoolInstance.query(query3,values,(error,queryResult3) => {
             queryResult.rows.unshift(queryResult3.rows)
           callback(null, queryResult.rows);
-
           })
         })
       }
@@ -61,6 +59,7 @@ module.exports = (dbPoolInstance) => {
 
   let tasksGiven = (callback,id) => {
     const values = [id]
+    // This query returns the tasks given by the user, including the names of the assignees, and the board name of the board.
     let query = `SELECT task_id, taskname, ownerid,tobedoneby, requestid, name AS boardname, createdat, duedate, doneyet FROM
 boards 
 INNER JOIN
@@ -86,6 +85,9 @@ ON y.board_id = boards.id`
     const values = [requestid]
     let query = `SELECT * FROM requests WHERE id=$1`
 
+    // Conditional query
+    // if Doneyet is currently set to Yes, set No.
+    // if Doneyet is currently set to No, set Yes.
     dbPoolInstance.query(query,values,(error, queryResult) => {
       if( error ){
         callback(error, null);
@@ -114,6 +116,7 @@ ON y.board_id = boards.id`
     }
 
   let editTask = (taskid,callback) => {
+    // Query 1 returns task of a specific query.
     const values = [taskid]
     let query = `SELECT * FROM tasks WHERE id=$1`
     dbPoolInstance.query(query,values,(error ,queryResult) => {
@@ -121,6 +124,7 @@ ON y.board_id = boards.id`
         callback(error, null);
       }else{
         if( queryResult.rows.length > 0 ){
+          // Query 2 returns all boards for the dropdown to be displayed
           let query = `SELECT * FROM boards`
           dbPoolInstance.query(query,(error,queryResult2) => {
             queryResult.rows.push(queryResult2.rows)
@@ -132,6 +136,7 @@ ON y.board_id = boards.id`
       }
     })
   }
+
 
   let submitEditTask = (callback,formObject) => {
     const values = [formObject.task_id,formObject.taskname,formObject.dueDate,formObject.project]
@@ -152,9 +157,8 @@ ON y.board_id = boards.id`
   }
 
   let findLatestTask = (callback) => {
-
+    // Get the latest task, to display the id of the new task by adding 1.
     let query = `SELECT * FROM tasks ORDER BY id DESC LIMIT 1`
-
     dbPoolInstance.query(query,(error, queryResult) => {
       if( error ){
         callback(error, null);
@@ -162,6 +166,7 @@ ON y.board_id = boards.id`
         if(queryResult.rows.length == 0){
          queryResult.rows = [[]] 
         }
+          // Get information of the all boards for the dropdown in the form
           let query2 = `SELECT * FROM boards`
           dbPoolInstance.query(query2,(error,queryResult2) => {
             queryResult.rows.push(queryResult2.rows)
@@ -190,6 +195,7 @@ ON y.board_id = boards.id`
   }
 
   let selectAllUsers = (callback) => {
+    // To display user dropdown for task owner to choose its assignees.
     let query = 'SELECT * FROM users'
 
     dbPoolInstance.query(query,(error,queryResult) => {
@@ -208,6 +214,7 @@ ON y.board_id = boards.id`
       callback(null,[])
     }
 
+    //Inserting multiple assignees using one query string.
     let query = 'INSERT INTO requests(task_id,user_id,doneYet) VALUES '
 
     for(let i = 0; i < userchoices.length; i++){
@@ -262,6 +269,7 @@ ON y.board_id = boards.id`
       let task_id = reqObj.task_id
       let userchoices = reqObj.userchoices
 
+      // Inserting multiple assignees using one query string.
       for(let i = 0; i < userchoices.length; i++){
         if(i == userchoices.length - 1){
           query2+='('+task_id+','+userchoices[i]+',\'No\')'
@@ -294,20 +302,25 @@ ON y.board_id = boards.id`
 
   let seeAllTasksFromProject = (callback) => {
     
+    // This query returns all tasks from the task table including the name of the task owner
     let query = 'SELECT tasks.id AS task_id, tasks.name AS taskname, tasks.user_id AS ownerid,createdat, duedate, users.name AS username, board_id FROM tasks INNER JOIN users ON users.id = tasks.user_id'
 
     dbPoolInstance.query(query,(error,queryResult) => {
       if(error){
         callback(error,"QueryError")
       } else {
+
+        // This query returns all the boards which exists, including the name of the user who created the project.
         let query2 = 'SELECT boards.id AS id, boards.name AS name, boards.description AS description, boards.user_id AS user_id, users.name AS projownername FROM boards INNER JOIN users ON boards.user_id = users.id'
         dbPoolInstance.query(query2,(error,queryResult2) => {
           queryResult.rows.unshift(queryResult2.rows)
 
+          // This query returns all requests (i.e. users assigned to complete a certain tasks) including their names
           let query3 = 'SELECT task_id, user_id, name, doneYet FROM requests INNER JOIN users ON requests.user_id = users.id'
           dbPoolInstance.query(query3,(error,queryResult3) => {
             queryResult.rows.unshift(queryResult3.rows)
 
+            // This query returns the all details of the current users of the app. 
             let query4 = 'SELECT * FROM users'
             dbPoolInstance.query(query4,(error,queryResult4) => {
               queryResult.rows.unshift(queryResult4.rows)

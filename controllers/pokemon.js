@@ -15,6 +15,7 @@ module.exports = (db) => {
    }
 
    let logout = (request,response) => {
+    // Clear cookies and redirect back to homepage
     response.clearCookie('loggedin')
     response.redirect("/")
    }
@@ -28,51 +29,47 @@ module.exports = (db) => {
 
     const callback = (err,result) => {
       if(result == "No results found"){
+        // If no username found, re-render homepage
         console.log("No username found")
         response.redirect("/")
       } else if( result == "Query error") {
-        console.log("query erroe")
+        // If password not found, re-render homepage
+        console.log("query error")
         response.redirect("/")
       } else {
         let id = result[0].id
         //Once registered, set cookies.
         response.cookie('loggedin',sha256(id + SALT))
-        
+        // And redirect to projectOverview page.
         response.redirect('/user/'+id+'/projectOverview/')
       }
     }
-
     db.pokemon.submitLogin(callback,username,password)
   }
 
+  // Registering a new user.
   let submitNewUser = (request,response) => {
     let username = request.body.username
+    //Encrypt password
     let password = sha256(request.body.password)
-
-    // response.cookie('loggedin',sha256())
-
-    
 
     const callback = (err,result) => {
       let id = result[0].id
       //Once registered, set cookies.
-
       response.cookie('loggedin',sha256(id + SALT))
-
       response.redirect('/user/'+id+'/projectOverview/')
     }
-
     db.pokemon.submitNewUser(callback,username,password)
   }
 
+
+
   let received = (request, response) => {
     let id = request.params.id
-
     let currentSessionCookie = request.cookies['loggedin']
 
 
     if(sha256(id + SALT) == currentSessionCookie){
-
     const callback = (err,result) => {
 
       let username = result[0][0].name
@@ -190,10 +187,12 @@ module.exports = (db) => {
     let userid = request.params.userid
     let taskid = request.params.taskid
 
-    //task_id
-    //taskname
-    //dueDate
-    //project
+    // request.body comes from the form 
+    // It has the following fields:
+    //  task_id
+    //  taskname
+    //  dueDate
+    //  project
 
     request.body.dueDate = moment(request.body.dueDate).format('LLL')
     const callback = (err,result) => {
@@ -203,12 +202,13 @@ module.exports = (db) => {
   }
 
   let createTask = (request,response) => {
+    // Verify authentication
     let userid = request.params.id 
-
     let currentSessionCookie = request.cookies['loggedin']
-
     if(sha256(userid + SALT) == currentSessionCookie){ 
         const callback = (err,result) => {
+          // task is the latest task to get the id of the new task by adding 1
+          // allBoards is to display the dropdown.
           const data = {
             task: result[0],
             allBoards: result[1],
@@ -223,11 +223,19 @@ module.exports = (db) => {
   }
 
   let submitCreatedTask = (request,response) => {
+    // request.body contains:
+    // taskname
+    // createdAt
+    // dueDate
+    // user_id
+    // project
+
     //Change date into proper format
     request.body.dueDate = moment(request.body.dueDate).format('LLL')
-    console.log(request.body)
     const callback = (err,result) => {
-    console.log("success at callback")
+    // Upon successful insertion of the task, 
+    // Redirect to the page where the task owner can assign the task to others.
+
     const data = {
       taskid: result[0].id,
       userid: result[0].user_id
@@ -240,7 +248,7 @@ module.exports = (db) => {
   }
   
   let setRequest = (request,response) => {
-    //Though not needed, use this to verify 
+    // Displays the form which allow task owner to choose its assignees 
     let userid = request.params.userid
     let taskid = request.params.taskid 
 
@@ -259,16 +267,20 @@ module.exports = (db) => {
     let userid = request.params.userid;
 
     const callback = (err,result) => {
+    //After assignees are selected, redirect it to the the 'given' page
      response.redirect('/user/'+userid+'/given')
     }
-
     db.pokemon.submitRequest(callback,request.body)
   }
 
   let displayEditRequest = (request,response) => {
+    // This controller is for displaying the edit page
+    // for the task owner to edit assignees
 
+    // requests is an array of requests of a specific task.
     let userid = request.params.userid
     let taskid = request.params.taskid
+
 
     const callback = (err,result) => {
       const data = {
@@ -279,7 +291,6 @@ module.exports = (db) => {
       }
       response.render('pokemon/editRequest',data)
     } 
-
     db.pokemon.displayEditRequest(callback,taskid)
   }
 
@@ -322,38 +333,42 @@ module.exports = (db) => {
   let projOverview = (request,response) => {
     let userid = request.params.userid
     
+    // Authentication of user
     let currentSessionCookie = request.cookies['loggedin']
-
-
     if(sha256(userid + SALT) == currentSessionCookie){
+      // The query result is an array of 4 elements.
+      // result[0] is an array of User objects.
+      // result[1] is an array of Request objects with the assignees's name.
+      // result[2] is an array of Board objects with the board owner's name.
+      // result[3] is an array of Task objects with the task owner's name
+      const callback = (err,result) => {
+        let names = result[0]
+        let requestsWithAssigneeName = result[1]
+        let boards = result[2]
+        let boardArray = boards.map(board => {return board.id})
+        let tasks = result.slice(3)
 
-        const callback = (err,result) => {
+        // The below code returns the name of the current user logged in.
+        let username = names.filter(n => n.id == userid)
+        let theName = username[0].name
 
-            let names = result[0]
-            let requestsWithAssigneeName = result[1]
-            let boards = result[2]
-            let boardArray = boards.map(board => {return board.id})
-            let tasks = result.slice(3)
-
-            let username = names.filter(n => n.id == userid)
-            let theName = username[0].name
-            
-            let resultArray = []
-
-            for(let i = 0; i < boardArray.length; i++){
-              let subArray = tasks.filter(el => el.board_id == boardArray[i])
-              resultArray.push(subArray)
-            }
-
-            const data = {
-              result: resultArray,
-              boards: boards,
-              userid: userid,
-              requestsWithAssigneeName: requestsWithAssigneeName,
-              theName: theName
-            }
-            response.render('pokemon/project',data)     
+        // The below code separates the tasks into an array of arrays
+        // Each array containing an array of tasks with the same board id.
+        let resultArray = []
+        for(let i = 0; i < boardArray.length; i++){
+          let subArray = tasks.filter(el => el.board_id == boardArray[i])
+          resultArray.push(subArray)
         }
+
+        const data = {
+          result: resultArray,
+          boards: boards,
+          userid: userid,
+          requestsWithAssigneeName: requestsWithAssigneeName,
+          theName: theName
+        }
+        response.render('pokemon/project',data)     
+      }
           db.pokemon.seeAllTasksFromProject(callback)
     } else {
       response.redirect("/")
@@ -379,11 +394,11 @@ module.exports = (db) => {
       response.redirect(`/user/${userid}/projectOverview/`)
     }
 
+    // When a project is deleted, all the tasks and requests associated with it has to be deleted as well.
     db.pokemon.cascadingDelete(callback,boardid)
   }
 
   let displayEditProj = (request,response) => {
-
     let boardid = request.params.boardid
     let userid = request.params.userid
 
@@ -393,17 +408,13 @@ module.exports = (db) => {
         userid: userid,
         boardid: boardid
       }
-
       console.log(data.project)
-
       response.render('pokemon/editProject',data)
     }
-
     db.pokemon.retrieveProjectData(callback,boardid)
   }
 
   let submitEditProj = (request,response) => {
-
     let userid = request.params.userid
     let projId = request.params.boardid
     let projObj = request.body

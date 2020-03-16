@@ -77,16 +77,17 @@ module.exports = (db) => {
     if(sha256(id + SALT) == currentSessionCookie){
     const callback = (err,result) => {
 
+      // This username is to display the name of the current user.
       let username = result[0][0].name
+      // boards is used to arrange tasks according to the board id it belongs to
       let boards = result[1]
+      // results are the tasks assigned to this user, including information of the board, and information on the user which requested the task.
       let results = result.slice(2)
 
+      // The below algorithm will filter tasks according to its board_id
       let boardArray = boards.map(board => {return board.id})
-
       let filteredResults = results.filter(e => e.yourid == id)
-
       let resultArray = []
-
       for(let i = 0; i < boardArray.length; i++){
         let subArray = filteredResults.filter(el => el.board_id == boardArray[i])
         resultArray.push(subArray)

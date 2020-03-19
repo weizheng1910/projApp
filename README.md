@@ -15,9 +15,9 @@ All of these tasks and issues are condensed into a single page so that every tea
 To sum up, this app aims to address information failure, reducing key person risk within the team.  
 
 ### Brief description of ERD and Schema
-[ERD](./erd.png)</br>
-Each trading counterparty is represented by a **board**, which has many **tasks** belonging to it.
-You can assign a **task** to many users. The act of assigning a task is a **request**. So, a **task** can have many **requests**.
+See [ERD](./erd.png) here. </br>
+Each trading counterparty is represented by a **board**, which has many **tasks** belonging to it.</br>
+You can assign a **task** to many users. The act of assigning a task is a **request**. So, a **task** can have many **requests**.</br>
 A user will create a new **board**, whenever there is a trading counterparty has been onboarded. A user can create many **boards**.
 
 ### Brief explanation of how the app works

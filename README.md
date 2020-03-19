@@ -24,11 +24,11 @@ A user will create a new board, whenever there is a new trading counterparty on 
 
 ### Brief explanation of how it works
 
-Users can create a task, for any other users, including themselves. They have to set a deadline and also the trading counterparty the task is under.
+Users can create a task for other users, including themselves. The task has to have a deadline set and the trading counterparty specified.
 
-There is another page for the users to see the tasks assigned to them, organised by the trading counterparty they are under. Once they have completed the tasks, they will be able to check the tasks of the list, by clicking on a button.
+There is another page for the users to see the tasks assigned to them, grouped according to the trading counterparty they are under. They can mark it as done when they have completed the task. 
 
-There is an overview page to see the ongoing tasks. So every user has a sensing of the current situation just by referring to this page.
+There is an overview page to see all tasks which are ongoing. So every user has a overview of the current situation just by looking at this page.
 
 ### Process:
 

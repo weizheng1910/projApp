@@ -1,9 +1,9 @@
 ## ProjApp
 
 ### Tech stack
-PostgreSQL 
-Express.js
-Node.js
+PostgreSQL </br>
+Express.js </br>
+Node.js </br>
 React.js
 
 

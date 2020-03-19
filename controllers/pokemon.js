@@ -23,9 +23,6 @@ module.exports = (db) => {
   let submitLogin = (request,response) => {
     let username = request.body.username
     let password = request.body.password
-    
-    console.log("submitted us is "+username)
-    console.log("submitted pw is "+password)
 
     const callback = (err,result) => {
       if(result == "No results found"){
@@ -37,6 +34,7 @@ module.exports = (db) => {
         console.log("query error")
         response.redirect("/")
       } else {
+        // If username and password is present, verify password
         // Login if password matches, if not redirect to homepage
         if (result[0].password == sha256(password)){
           let id = result[0].id
@@ -55,7 +53,6 @@ module.exports = (db) => {
   // Registering a new user.
   let submitNewUser = (request,response) => {
     let username = request.body.username
-    //Encrypt password
     let password = sha256(request.body.password)
 
     const callback = (err,result) => {
@@ -70,13 +67,12 @@ module.exports = (db) => {
 
 
   let received = (request, response) => {
+    // Authenticate user
     let id = request.params.id
     let currentSessionCookie = request.cookies['loggedin']
 
-
     if(sha256(id + SALT) == currentSessionCookie){
     const callback = (err,result) => {
-
       // This username is to display the name of the current user.
       let username = result[0][0].name
       // boards is used to arrange tasks according to the board id it belongs to
@@ -84,7 +80,9 @@ module.exports = (db) => {
       // results are the tasks assigned to this user, including information of the board, and information on the user which requested the task.
       let results = result.slice(2)
 
-      // The below algorithm will filter tasks according to its board_id
+      // The below algorithm will arrange tasks according to its board_id
+      // The results will be in resultArray which is an array of arrays.
+      // Each element of the master array will be an array of tasks with the same id.
       let boardArray = boards.map(board => {return board.id})
       let filteredResults = results.filter(e => e.yourid == id)
       let resultArray = []
@@ -92,16 +90,14 @@ module.exports = (db) => {
         let subArray = filteredResults.filter(el => el.board_id == boardArray[i])
         resultArray.push(subArray)
       }
-
       const data = {
         boards: boards,
         resultArray: resultArray,
         userid: id,
         username: username
       }
-        
-        response.render('pokemon/received',data)
-      }
+      response.render('pokemon/received',data)
+    }
     db.pokemon.tasksReceived(callback,id)
   } else{
     response.redirect("/")
@@ -109,56 +105,51 @@ module.exports = (db) => {
 }
 
   let given = (request, response) => {
+    // Authenticate user
     let id = request.params.id
-    
     let currentSessionCookie = request.cookies['loggedin']
 
-
     if(sha256(id + SALT) == currentSessionCookie){
-        const callback = (err,result) => {
+      const callback = (err,result) => {
+        // result[0] is the array of all users
+        // result[1] is the array of all requests, with assignees name included
+        // result[2] is the array of all returns all boards which exists.
+        // result[3] is the array of all tasks, including the name of the task owner.
 
-            let usersArray = result[0]
-            let userArray = result[0].filter( f => f.id == id)
-            let theName = userArray[0].name
+        // The below 2 lines gets the name of the current user logged in.
+        let currentUserObject = result[0].filter( f => f.id == id)
+        let theName = currentUserObject[0].name
 
+        let requestsWithAssigneeName = result[1]
 
-            let requestsWithAssigneeName = result[1]
-            let boards = result[2]
-            let boardArray = boards.map(board => {return board.id})
-            let tasks = result.slice(3)
+        // Using board array, transform it into board which exists.
+        let boards = result[2]
+        let boardArray = boards.map(board => {return board.id})
+        let tasks = result.slice(3)
 
-            let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
-            
-            // var tasksUserName 
-
-            // if(tasksOfThisUserId.length == 0){
-            //   tasksUserName = ""
-            // } else {
-            //   tasksUserName = tasksOfThisUserId[0].username
-            // }
-            
-            console.log(theName)
-
-            let resultArray = []
-
-            for(let i = 0; i < boardArray.length; i++){
-              let subArray = tasksOfThisUserId.filter(el => el.board_id == boardArray[i])
-              resultArray.push(subArray)
-            }
-
-            const data = {
-              result: resultArray,
-              boards: boards,
-              userid: id,
-              requestsWithAssigneeName: requestsWithAssigneeName,
-              theName: theName
-            }
-         response.render('pokemon/given2',data)
-              
+        // tasks is an array of all tasks
+        // To get the tasks own by the current user, we filter the array by his user_id
+        // Then we arrange it according to the board the tasks is in,
+        // By making an array of array with a for-loop
+        let tasksOfThisUserId = tasks.filter(tk => tk.ownerid == id) 
+        let resultArray = []
+        for(let i = 0; i < boardArray.length; i++){
+          let subArray = tasksOfThisUserId.filter(el => el.board_id == boardArray[i])
+          resultArray.push(subArray)
         }
 
-        db.pokemon.seeAllTasksFromProject(callback)
+        // Push the data we want into the views file.
+        const data = {
+          result: resultArray,
+          boards: boards,
+          userid: id,
+          requestsWithAssigneeName: requestsWithAssigneeName,
+          theName: theName
+        }
+        response.render('pokemon/given2',data)
+      }
 
+      db.pokemon.seeAllTasksFromProject(callback)
       } else {
         console.log("You are not allowed.")
         response.redirect('/')
@@ -184,7 +175,7 @@ module.exports = (db) => {
           allBoards: result[1]
         }
         response.render('pokemon/editTask',data)
-    }    
+    }
     db.pokemon.editTask(taskid,callback)
   }
 
@@ -200,9 +191,10 @@ module.exports = (db) => {
     //  dueDate
     //  project
 
+    // Converting dueDate into a readable format
     request.body.dueDate = moment(request.body.dueDate).format('LLL')
     const callback = (err,result) => {
-        response.redirect(`/user/${userid}/task/${taskid}/editRequest`)
+      response.redirect(`/user/${userid}/task/${taskid}/editRequest`)
     }   
     db.pokemon.submitEditTask(callback,request.body)
   }
@@ -287,7 +279,6 @@ module.exports = (db) => {
     let userid = request.params.userid
     let taskid = request.params.taskid
 
-
     const callback = (err,result) => {
       const data = {
         userid: userid,
@@ -312,27 +303,23 @@ module.exports = (db) => {
 
   let displayProjectForm = (request,response) => {
     let userid = request.params.userid
-
     let currentSessionCookie = request.cookies['loggedin']
 
     if(sha256(userid + SALT) == currentSessionCookie){ 
-
-    const data = {
-      userid:userid
+      const data = {
+        userid:userid
+      }
+      response.render('pokemon/createProj',data)
+    } else {
+      response.render('/')
     }
-    response.render('pokemon/createProj',data)
-  } else {
-    response.render('/')
-  }
   }
 
   let submitNewProject = (request,response) => {
     let userid = request.params.userid
-
     const callback = (err,result) => {
       response.redirect('/user/'+userid+'/projectOverview')
     }
-
     db.pokemon.createNewProject(callback,request.body,userid)
   }
 
@@ -375,7 +362,8 @@ module.exports = (db) => {
         }
         response.render('pokemon/project',data)     
       }
-          db.pokemon.seeAllTasksFromProject(callback)
+      
+      db.pokemon.seeAllTasksFromProject(callback)
     } else {
       response.redirect("/")
       }
@@ -388,7 +376,6 @@ module.exports = (db) => {
     const callback = (err,result) => {
       response.redirect('/user/'+userid+'/given')
     }
-
     db.pokemon.deleteTask(callback,taskid)
   }
 

@@ -16,13 +16,11 @@ To sum up, this app aims to address information failure, reducing key person ris
 
 ### Brief description of ERD and Schema
 [ERD](./erd.png)</br>
-Each trading counterparty is represented by a _board_, which has many _tasks_ belonging to it.
+Each trading counterparty is represented by a **board**, which has many **tasks** belonging to it.
+You can assign a **task** to many users. The act of assigning a task is a **request**. So, a **task** can have many **requests**.
+A user will create a new **board**, whenever there is a trading counterparty has been onboarded. A user can create many **boards**.
 
-You can assign a _task_ to many users. The act of assigning a task is a _request_. So, a _task_ can have many _requests_.
-
-A user will create a new board, whenever there is a new trading counterparty on board. A user can create many _boards_.
-
-### Brief explanation of how it works
+### Brief explanation of how the app works
 
 Users can create a task for other users, including themselves. The task has to have a deadline set and the trading counterparty specified.
 
@@ -35,7 +33,8 @@ There is an overview page to see all tasks which are ongoing. So every user has 
 1. Drawing up the ERD.
 2. Coming up with UX WireFrames for the App. 
 3. Planning out complex SQL Queries based on what is required in the wireframes.
-4. Coding and testing. 
+4. Planning out MVC Logic.
+
 
 ### Key Takeaways 
 
@@ -46,9 +45,8 @@ There is an overview page to see all tasks which are ongoing. So every user has 
 * Using callback functions and creating modules to organise and orchestrate code 
 * Performing SQL Queries which involves multiple INNER JOIN
 * Conditional Rendering, using React.js
-* Using Express.js as the web framework for this application 
+* Using Express.js as the web framework, using npm packages (Moment.js) to support my application
 
-I am confident in displaying 
 
 ### Things which I can improve on: 
 

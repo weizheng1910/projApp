@@ -1,5 +1,14 @@
 ## ProjApp
 
+### Tech stack
+PostgreSQL 
+Express.js
+Node.js
+React.js
+
+
+
+
 ### Background:
 
 After working in Banking Operations for a year, I realised that it is difficult to stay on top of the tasks we have to do. Sometimes we can only work on a task after a team member has completed his or her part, and vice versa.

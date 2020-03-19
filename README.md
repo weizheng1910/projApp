@@ -46,15 +46,4 @@ There is an overview page to see all tasks which are ongoing. So every user has 
 * Performing SQL Queries which involves multiple INNER JOIN
 * Conditional Rendering, using React.js
 * Using Express.js as the web framework, using npm packages (Moment.js) to support my application
-
-
-### Things which I can improve on: 
-
-1. Planning the User Flow. Feedback from my instructors and TAs were that the User Flow was messy. This is because I have not given thought to it.
-2. Theme originality. Color theme was a replica of Facebook's. I copied Facebook because it looks neat and vibrant. In the future, I will put in more effort on the color theme. 
-4. Features. Features on hindsight could be improved upon to better suit the needs of the end-user. 
-  Additional features could include:
- - A separate category to display only reminders of the things to look out for when dealing with a particular client. 
- - For task reminders like meetings,  the task could be automatically cleared from the application when it reaches the deadline. 
  
- More thought should be given to the features and how it caters to the end user. 

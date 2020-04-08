@@ -64,7 +64,8 @@ class Home extends React.Component {
 
                   <div class="form-group col-md-6">
                     <label>Password</label>
-                    <input type="password" name="password" class="form-control"/>
+                    <input pattern="^(?=.*\d).{4,8}$" type="password" name="password" class="form-control"/>
+                    <small> Password must be: <ul><li> Between 4 and 8 digits long</li> <li>Include at least one numeric digit</li></ul></small>
                   </div>
 
                   <div class="m-3">

@@ -11,6 +11,10 @@ module.exports = (db) => {
    const SALT = "strawberries are blue"
 
    let home = (request,response) => {
+    if(request.params){
+
+    }
+    
     response.render('pokemon/home')
    }
 

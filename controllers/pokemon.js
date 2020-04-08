@@ -335,6 +335,7 @@ module.exports = (db) => {
       // result[2] is an array of Board objects with the board owner's name.
       // result[3] is an array of Task objects with the task owner's name
       const callback = (err,result) => {
+        console.log(result)
         let names = result[0]
         let requestsWithAssigneeName = result[1]
         let boards = result[2]

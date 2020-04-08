@@ -39,7 +39,7 @@ class CreateTask extends React.Component {
 
             <div className="form-group col-md-6">
               <label>Task Name</label>
-              <textarea name="taskname" className="form-control" />
+              <textarea required name="taskname" className="form-control" />
             </div>
 
             <div className="form-group col-md-6">
@@ -54,7 +54,7 @@ class CreateTask extends React.Component {
 
             <div className="form-group col-md-6">
               <label>Date Due</label>
-              <input type="datetime-local" name="dueDate" className="form-control"/>
+              <input required type="datetime-local" name="dueDate" className="form-control"/>
             </div>
 
             <div className="form-group col-md-6">

@@ -10,7 +10,15 @@ module.exports = (dbPoolInstance) => {
     const values = [username,password]
     let query = 'INSERT INTO users(name,password) VALUES($1,$2) RETURNING *'
     dbPoolInstance.query(query,values,(error,queryResult) => {
-      callback(null,queryResult.rows)
+      if(error){
+        callback(error,"Query error")
+      } else {
+        if(queryResult.rows.length == 0){
+          callback(error,"No results found")
+        } else {
+          callback(null,queryResult.rows)
+        }
+      }
     })
   }
 

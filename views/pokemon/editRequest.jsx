@@ -33,7 +33,7 @@ class EditRequest extends React.Component {
 
             <div class="form-group">
               <label>Choose Assignees</label>
-              <select name='userchoices'multiple class="form-control">
+              <select required name='userchoices'multiple class="form-control">
                 {userArray}
               </select>
 

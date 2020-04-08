@@ -31,12 +31,12 @@ class EditTask extends React.Component {
 
             <div class="form-group col-md-6">
               <label>Task Name</label>
-              <textarea name="taskname" value={this.props.task.name} class="form-control" />
+              <textarea required name="taskname" value={this.props.task.name} class="form-control" />
             </div>
 
             <div class="form-group col-md-6">
               <label>Date Due</label>
-              <input type="datetime-local" name="dueDate" class="form-control"/>
+              <input required type="datetime-local" name="dueDate" class="form-control"/>
             </div>
 
             <div class="form-group col-md-6">

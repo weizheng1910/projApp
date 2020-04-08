@@ -21,12 +21,12 @@ class CreateProject extends React.Component {
 
             <div className="form-group col-md-6 mx-1">
               <label>Project Name</label>
-              <input type="text" name="projname"  className="form-control"/>
+              <input required type="text" name="projname"  className="form-control"/>
             </div>
 
             <div className="form-group col-md-6 mx-1">
               <label>Description</label>
-              <textarea rows="10" name="description" className="form-control"/>
+              <textarea required rows="10" name="description" className="form-control"/>
             </div>
 
             <div class="mx-3">

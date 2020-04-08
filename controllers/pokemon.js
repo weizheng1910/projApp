@@ -36,8 +36,7 @@ module.exports = (db) => {
       } else {
         // If username and password is present, verify password
         // Login if password matches, if not redirect to homepage
-        // result[0].password == sha256(password)
-        if (true){
+        if (result[0].password == sha256(password)){
           let id = result[0].id
           //Once registered, set cookies.
           response.cookie('loggedin',sha256(id + SALT))

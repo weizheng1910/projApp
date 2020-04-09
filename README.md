@@ -57,7 +57,6 @@ There is an overview page to see all tasks which are ongoing. So every user has 
 * Using Express.js as the web framework, using npm packages (Moment.js) to support my application
 
 ### Reflections
-
-* I have found another way to avoid callback hell in my code, which is to use async/await or promises. This is one crucial flaw in the application.
+* After doing more studying, I realised my code could be better structured using promises, instead of numerous nested callbacks I have currently. 
 
  

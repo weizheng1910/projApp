@@ -55,4 +55,9 @@ There is an overview page to see all tasks which are ongoing. So every user has 
 * Performing SQL Queries which involves multiple INNER JOIN
 * Conditional Rendering
 * Using Express.js as the web framework, using npm packages (Moment.js) to support my application
+
+### Reflections
+
+* I have found another way to avoid callback hell in my code, which is to use async/await or promises. This is one crucial flaw in the application.
+
  

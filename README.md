@@ -53,6 +53,6 @@ There is an overview page to see all tasks which are ongoing. So every user has 
   * Controller is the logic responsible for responding to the client's input
 * Using callback functions and creating modules to organise and orchestrate code 
 * Performing SQL Queries which involves multiple INNER JOIN
-* Conditional Rendering, using React.js
+* Conditional Rendering
 * Using Express.js as the web framework, using npm packages (Moment.js) to support my application
  

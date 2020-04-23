@@ -1,6 +1,4 @@
 module.exports = (app, allModels) => {
-
-
   /*
    *  =========================================
    *  =========================================
@@ -13,45 +11,69 @@ module.exports = (app, allModels) => {
    */
 
   // require the controller
-  const pokemonControllerCallbacks = require('./controllers/pokemon')(allModels);
+  const controllerCallbacks = require("./controllers/controller")(allModels);
 
-  app.get('/', pokemonControllerCallbacks.home)
-  
-  app.get('/user/:id/received', pokemonControllerCallbacks.received);
-  app.get('/user/:id/given', pokemonControllerCallbacks.given);
-  app.get('/toggleDone/:id', pokemonControllerCallbacks.toggleDone);
+  app.get("/", controllerCallbacks.home);
 
-  app.get('/user/:userid/editTask/:taskid', pokemonControllerCallbacks.editTask)
-  app.get('/user/:id/createTask', pokemonControllerCallbacks.createTask)
-  app.get('/user/:userid/task/:taskid/setRequest', pokemonControllerCallbacks.setRequest)
-  
-  app.get('/user/:userid/task/:taskid/editRequest', pokemonControllerCallbacks.displayEditRequest)
+  app.get("/user/:id/received", controllerCallbacks.received);
+  app.get("/user/:id/given", controllerCallbacks.given);
+  app.get("/toggleDone/:id", controllerCallbacks.toggleDone);
 
-  app.get('/user/:userid/projectOverview/', pokemonControllerCallbacks.projOverview)
+  app.get("/user/:userid/editTask/:taskid", controllerCallbacks.editTask);
+  app.get("/user/:id/createTask", controllerCallbacks.createTask);
+  app.get(
+    "/user/:userid/task/:taskid/setRequest",
+    controllerCallbacks.setRequest
+  );
 
-  app.get('/user/:userid/createProject', pokemonControllerCallbacks.displayProjectForm)
+  app.get(
+    "/user/:userid/task/:taskid/editRequest",
+    controllerCallbacks.displayEditRequest
+  );
 
-  app.get('/logout', pokemonControllerCallbacks.logout)
+  app.get("/user/:userid/projectOverview/", controllerCallbacks.projOverview);
 
-  app.post('/login',pokemonControllerCallbacks.submitLogin)
-  app.post('/createNewUser', pokemonControllerCallbacks.submitNewUser)
+  app.get(
+    "/user/:userid/createProject",
+    controllerCallbacks.displayProjectForm
+  );
 
+  app.get("/logout", controllerCallbacks.logout);
 
-  app.post('/user/:userid/createProject', pokemonControllerCallbacks.submitNewProject)
+  app.post("/login", controllerCallbacks.submitLogin);
+  app.post("/createNewUser", controllerCallbacks.submitNewUser);
 
-  app.post('/user/:userid/task/:taskid/submitRequest', pokemonControllerCallbacks.submitRequest)
+  app.post("/user/:userid/createProject", controllerCallbacks.submitNewProject);
 
-  app.post('/user/:userid/task/:taskid/submitEditRequest',pokemonControllerCallbacks.submitEditRequest)
-  
-  app.get('/user/:userid/editProj/:boardid',pokemonControllerCallbacks.displayEditProj)
+  app.post(
+    "/user/:userid/task/:taskid/submitRequest",
+    controllerCallbacks.submitRequest
+  );
 
-  app.put('/user/:userid/editProject/:boardid',pokemonControllerCallbacks.submitEditProj)
+  app.post(
+    "/user/:userid/task/:taskid/submitEditRequest",
+    controllerCallbacks.submitEditRequest
+  );
 
-  app.put('/user/:userid/editTask/:taskid', pokemonControllerCallbacks.submitEditTask)
-  app.put('/createTask', pokemonControllerCallbacks.submitCreatedTask)
+  app.get(
+    "/user/:userid/editProj/:boardid",
+    controllerCallbacks.displayEditProj
+  );
 
-  app.delete('/user/:userid/deleteTask/:taskid', pokemonControllerCallbacks.deleteTask)
-  app.delete('/user/:userid/deleteProj/:boardid', pokemonControllerCallbacks.deleteProj)
+  app.put(
+    "/user/:userid/editProject/:boardid",
+    controllerCallbacks.submitEditProj
+  );
 
+  app.put("/user/:userid/editTask/:taskid", controllerCallbacks.submitEditTask);
+  app.put("/createTask", controllerCallbacks.submitCreatedTask);
 
+  app.delete(
+    "/user/:userid/deleteTask/:taskid",
+    controllerCallbacks.deleteTask
+  );
+  app.delete(
+    "/user/:userid/deleteProj/:boardid",
+    controllerCallbacks.deleteProj
+  );
 };

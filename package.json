@@ -21,7 +21,9 @@
     "react-dom": "^16.12.0"
   },
   "description": "Start your MVC app here by copying this bolierplate code.",
-  "devDependencies": {},
+  "devDependencies": {
+    "prettier": "2.0.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wdi-sg/mvc-template.git"

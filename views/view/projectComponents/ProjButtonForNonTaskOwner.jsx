@@ -1,3 +1,5 @@
+var React = require("react");
+
 class ProjButtonForNonTaskOwner extends React.Component {
   render(){
     let index = this.props.index;

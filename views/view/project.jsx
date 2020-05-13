@@ -1,57 +1,23 @@
 var React = require("react");
 var Layout = require("./layout.jsx");
 var moment = require("moment");
+var TaskComponent = require("./projectComponents/TaskComponent.jsx")
+var ProjButtonForTaskOwner = require("./projectComponents/ProjButtonForTaskOwner.jsx")
+var ProjButtonForNonTaskOwner = require("./projectComponents/ProjButtonForNonTaskOwner.jsx")
 
 class Project extends React.Component {
   render() {
-    var boards = this.props.boards;
-    var userid = this.props.userid;
-    var requestsWithAssigneeName = this.props.requestsWithAssigneeName;
-
+    var boards = this.props.allBoards;
+    var currentUserId = this.props.currentUserId;
+    var allRequests = this.props.allRequests;
     var dateNow = new Date();
-
+    var editAndDeleteProjButton;
+    
     var list = this.props.result.map(function (tasks, index) {
-      var editAndDeleteProjButton;
-
-      if (boards[index].user_id == userid) {
-        editAndDeleteProjButton = (
-          <div class="w-25 d-flex justify-content-between">
-            <div class="mx-1">
-              <form
-                action={`/user/${userid}/editProj/${boards[index].id}`}
-                method="GET"
-              >
-                <button
-                  type="submit"
-                  className="btn text-white font-weight-bold"
-                  style={{ backgroundColor: "#3b5998" }}
-                >
-                  Edit
-                </button>
-              </form>
-            </div>
-
-            <div class="mx-1">
-              <form
-                action={`/user/${userid}/deleteProj/${boards[index].id}?_method=delete`}
-                method="POST"
-              >
-                <button
-                  type="submit"
-                  className="btn btn-outline-secondary font-weight-bold"
-                >
-                  Delete
-                </button>
-              </form>
-            </div>
-          </div>
-        );
+      if (boards[index].user_id == currentUserId) {
+        editAndDeleteProjButton = (<ProjButtonForTaskOwner index={index} currentUserId={currentUserId} boards={boards} />);
       } else {
-        editAndDeleteProjButton = (
-          <div class="w-25 m-0">
-            <p align="right">Owned by {boards[index].projownername}</p>
-          </div>
-        );
+        editAndDeleteProjButton = (<ProjButtonForNonTaskOwner index={index} boards={boards} />);
       }
 
       return (
@@ -70,111 +36,36 @@ class Project extends React.Component {
 
           <div class="card-body">
             {tasks.map((task) => {
-              let currentId = task.task_id;
+              let idOfCurrentTask = task.task_id;
 
-              let requestsWithAssigneeNameOfTaskId = requestsWithAssigneeName.filter(
-                (tk) => currentId == tk.task_id
-              );
-              let y = requestsWithAssigneeNameOfTaskId.map((tsk) => tsk.name);
-              let z = requestsWithAssigneeNameOfTaskId.map(
-                (tsk) => tsk.doneyet
-              );
+              let allRequestsWithCurrentTaskId = allRequests.filter((request) => idOfCurrentTask == request.task_id);
+              let nameOfRequestees = allRequestsWithCurrentTaskId.map((request) => request.name);
+              let arrayOfRequestsCompletionStatus = allRequestsWithCurrentTaskId.map((request) => request.doneyet);
 
-              let string = "";
-
-              if (y.length == 1) {
-                string += y[0];
-              } else {
-                for (let i = 0; i < y.length; i++) {
-                  if (i == y.length - 1) {
-                    string += "and " + y[i];
-                  } else {
-                    string += y[i] + ", ";
+              let stringOfRequesteesNames = (namesOfRequestees) => {
+                let string = "";
+                if (namesOfRequestees.length == 1) {
+                  string += namesOfRequestees[0];
+                } else {
+                  for (let i = 0; i < namesOfRequestees.length; i++) {
+                    if (i == namesOfRequestees.length - 1) {
+                      string += "and " + namesOfRequestees[i];
+                    } else {
+                      string += namesOfRequestees[i] + ", ";
+                    }
                   }
                 }
+                return string
               }
 
-              if (string === "") {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div>
-                      {task.taskname}
-                      <br></br>
-                      <small>
-                        Assigned by {task.username} on {task.createdat}{" "}
-                      </small>
-                      <br></br>
-                      <small>Unassigned </small>
-                      <br></br>
-                      <small>Due by: {task.duedate}</small>
-                    </div>
+              return <TaskComponent 
+                requesteeNames={stringOfRequesteesNames(nameOfRequestees)} 
+                task={task} 
+                arrayOfRequestsCompletionStatus={arrayOfRequestsCompletionStatus}
+                dateNow={dateNow}
+              />
+              
 
-                    <div>
-                      <p class="font-weight-bold text-warning">UNASSIGNED</p>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (z.includes("No") == false) {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div>
-                      {task.taskname}
-                      <br></br>
-                      <small>
-                        Assigned by {task.username} on {task.createdat}{" "}
-                      </small>
-                      <br></br>
-                      <small>To {string} </small>
-                      <br></br>
-                      <small>Due by: {task.duedate}</small>
-                    </div>
-
-                    <div>
-                      <p class="font-weight-bold text-success">COMPLETED</p>
-                    </div>
-                  </div>
-                );
-              } else if (moment(task.duedate).toDate() < dateNow) {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div>
-                      {task.taskname}
-                      <br></br>
-                      <small>
-                        Assigned by {task.username} on {task.createdat}{" "}
-                      </small>
-                      <br></br>
-                      <small>To {string} </small>
-                      <br></br>
-                      <small class="font-weight-bold">
-                        Due by: {task.duedate}
-                      </small>
-                    </div>
-
-                    <div>
-                      <p class="font-weight-bold text-danger">OVERDUE</p>
-                    </div>
-                  </div>
-                );
-              } else {
-                return (
-                  <div class="m-3">
-                    <div>
-                      {task.taskname}
-                      <br></br>
-                      <small>
-                        Assigned by {task.username} on {task.createdat}{" "}
-                      </small>
-                      <br></br>
-                      <small>To {string} </small>
-                      <br></br>
-                      <small>Due by: {task.duedate}</small>
-                    </div>
-                  </div>
-                );
-              }
             })}
           </div>
         </div>
@@ -192,7 +83,7 @@ class Project extends React.Component {
           />
         </head>
         <body>
-          <Layout userid={this.props.userid}>
+          <Layout userid={this.props.currentUserId}>
             <div class="mx-4">
               <h3>Welcome, {this.props.currentUserName}</h3>
               <h3>Project Overview</h3>

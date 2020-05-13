@@ -4,255 +4,130 @@ var moment = require("moment");
 
 class Project extends React.Component {
   render() {
-    var boards = this.props.boards;
-    var userid = this.props.currentUserId;
+    var allBoards = this.props.allBoards;
+    var currentUserId = this.props.currentUserId;
     var username = this.props.currentUserName;
-    var requestsWithAssigneeName = this.props.requestsWithAssigneeName;
-
+    var allRequests = this.props.allRequests;
     var dateNow = new Date();
+    var boardsWithTasksPresent = this.props.allTasksOwnedByUserSplittedByBoard.filter((eachBoard) => eachBoard.length > 0);
 
-    var x = this.props.result.filter((tasks) => tasks.length > 0);
+    var list = boardsWithTasksPresent.map(function (eachBoard, index) {
+      
+      let boardId = eachBoard[0].board_id;
+      let currentBoard = allBoards.filter((bd) => bd.id == boardId)[0];
+      let userIdOfBoardOwner = currentBoard.user_id;
 
-    var list = x.map(function (tasks, index) {
-      let boardid = tasks[0].board_id;
-      let selectedBoardArray = boards.filter((bd) => bd.id == boardid);
-      let selectedBoard = selectedBoardArray[0];
+      let DomOfTasksInEachBoard = eachBoard.map((currentTaskOfEachBoard) => {
+        let taskIdOfCurrentTask = currentTaskOfEachBoard.task_id;
+        let allRequestsOfCurrentTask = allRequests.filter((request) => taskIdOfCurrentTask == request.task_id);
+        let namesOfRequestees = allRequestsOfCurrentTask.map((request) => request.name);
+        let arrayOfRequestsCompletionStatus = allRequestsOfCurrentTask.map((request) => request.doneyet);
+        let arrayOfRequestsWithRequesteeAndCompletionStatus = allRequestsOfCurrentTask.map(function (request) {
+          return {
+            name: request.name,
+            doneyet: request.doneyet,
+          };
+        });
 
-      var chunk;
+        let requestsNotCompleted = arrayOfRequestsWithRequesteeAndCompletionStatus.filter((request) => request.doneyet == "No");
 
-      if (userid == selectedBoard.user_id) {
-        chunk = (
-          <div class="w-25 d-flex justify-content-between">
-            <div class="mx-1">
-              <form
-                action={`/user/${userid}/editProj/${selectedBoard.id}`}
-                method="GET"
-              >
-                <button
-                  type="submit"
-                  className="btn text-white font-weight-bold"
-                  style={{ backgroundColor: "#3b5998" }}
-                >
-                  Edit
-                </button>
-              </form>
+
+        let stringOfRequesteesNames = (namesOfRequestees) => {
+          let string = "";
+
+          if (namesOfRequestees.length == 1) {
+            string += namesOfRequestees[0];
+          } else {
+            for (let i = 0; i < namesOfRequestees.length; i++) {
+              if (i == namesOfRequestees.length - 1) {
+                string += "and " + namesOfRequestees[i];
+              } else {
+                string += namesOfRequestees[i] + ", ";
+              }
+            }
+          }
+
+          return string
+        }
+
+        let stringOfRequesteesWhoHaveNotCompleteTask = (requestsNotCompleted) => {
+          let string = "";
+
+          if (requestsNotCompleted.length == 1) {
+            string += requestsNotCompleted[0].name;
+          } else {
+            for (let i = 0; i < requestsNotCompleted.length; i++) {
+              if (i == requestsNotCompleted.length - 1) {
+                string += "and " + requestsNotCompleted[i].name;
+              } else {
+                string += requestsNotCompleted[i].name + ", ";
+              }
+            }
+          }
+          return string
+        }
+
+        let returnTaskStatus = () => {
+          if(stringOfRequesteesNames(namesOfRequestees) === ""){
+            return <p class="font-weight-bold text-warning">UNTAGGED</p>
+          } else  if (arrayOfRequestsCompletionStatus.includes("No") == false) {
+            return <p class="font-weight-bold text-success">COMPLETED</p>
+          } else if (moment(currentTaskOfEachBoard.duedate).toDate() < dateNow) {
+            return <p class="font-weight-bold text-danger">OVERDUE</p>
+          } else {
+            return <p class="font-weight-bold text-secondary">ONGOING</p>
+          }
+        }
+
+        return (
+          <div class="m-3 d-flex justify-content-between">
+              <div class="w-75">
+                {currentTaskOfEachBoard.taskname}
+                <br></br>
+                <small>Created on: {currentTaskOfEachBoard.createdat} </small>
+                <br></br>
+                <small>Unassigned </small>
+                <br></br>
+
+                <small>Due by: {currentTaskOfEachBoard.duedate}</small>
             </div>
 
-            <div class="mx-1">
-              <form
-                action={`/user/${userid}/deleteProj/${selectedBoard.id}?_method=delete`}
-                method="POST"
-              >
-                <button
-                  type="submit"
-                  className="btn btn-outline-secondary font-weight-bold"
-                >
-                  Delete
-                </button>
-              </form>
+              <div>
+                {returnTaskStatus()}
+                <div>
+                  <form
+                    action={`/user/${currentTaskOfEachBoard.ownerid}/editTask/${currentTaskOfEachBoard.task_id}`}
+                    method="GET"
+                  >
+                    <button
+                      id={currentTaskOfEachBoard.task_id}
+                      type="submit"
+                      className="btn btn-outline-primary"
+                    >
+                      Edit Task
+                    </button>
+                  </form>
+                </div>
+              </div>
             </div>
-          </div>
-        );
-      }
+        )
+      })
+      
 
       return (
         <div class="card m-3" style={{ width: 40 + "rem" }}>
           <div class="card-header">
             <div class="d-flex justify-content-between">
               <div class="text-secondary font-weight-bold">
-                {selectedBoard.name}
+                {currentBoard.name}
               </div>
             </div>
             <br></br>
-            <small>{selectedBoard.description}</small>
+            <small>{currentBoard.description}</small>
           </div>
 
           <div class="card-body">
-            {tasks.map((task) => {
-              let currentId = task.task_id;
-
-              let requestsWithAssigneeNameOfTaskId = requestsWithAssigneeName.filter(
-                (tk) => currentId == tk.task_id
-              );
-              let y = requestsWithAssigneeNameOfTaskId.map((tsk) => tsk.name);
-              let z = requestsWithAssigneeNameOfTaskId.map(
-                (tsk) => tsk.doneyet
-              );
-              let p = requestsWithAssigneeNameOfTaskId.map(function (tsk) {
-                return {
-                  name: tsk.name,
-                  doneyet: tsk.doneyet,
-                };
-              });
-
-              let p2 = p.filter((t) => t.doneyet == "No");
-
-              let string = "";
-
-              if (y.length == 1) {
-                string += y[0];
-              } else {
-                for (let i = 0; i < y.length; i++) {
-                  if (i == y.length - 1) {
-                    string += "and " + y[i];
-                  } else {
-                    string += y[i] + ", ";
-                  }
-                }
-              }
-
-              let string2 = "";
-
-              if (p2.length == 1) {
-                string2 += p2[0].name;
-              } else {
-                for (let i = 0; i < p2.length; i++) {
-                  if (i == p2.length - 1) {
-                    string2 += "and " + p2[i].name;
-                  } else {
-                    string2 += p2[i].name + ", ";
-                  }
-                }
-              }
-
-              if (string === "") {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div class="w-75">
-                      {task.taskname}
-                      <br></br>
-                      <small>Created on: {task.createdat} </small>
-                      <br></br>
-                      <small>Unassigned </small>
-                      <br></br>
-
-                      <small>Due by: {task.duedate}</small>
-                    </div>
-
-                    <div>
-                      <p class="font-weight-bold text-warning">UNTAGGED</p>
-                      <div>
-                        <form
-                          action={`/user/${task.ownerid}/editTask/${task.task_id}`}
-                          method="GET"
-                        >
-                          <button
-                            id={task.task_id}
-                            type="submit"
-                            className="btn btn-outline-primary"
-                          >
-                            Edit Task
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (z.includes("No") == false) {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div class="w-75">
-                      {task.taskname}
-                      <br></br>
-                      <small>Created on: {task.createdat} </small>
-                      <br></br>
-                      <small>Assigned to: {string} </small>
-                      <br></br>
-
-                      <small>Due by: {task.duedate}</small>
-                    </div>
-
-                    <div>
-                      <p class="font-weight-bold text-success">COMPLETED</p>
-                      <div>
-                        <form
-                          action={`/user/${task.ownerid}/editTask/${task.task_id}`}
-                          method="GET"
-                        >
-                          <button
-                            id={task.task_id}
-                            type="submit"
-                            className="btn btn-outline-primary"
-                          >
-                            Edit Task
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else if (moment(task.duedate).toDate() < dateNow) {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div class="w-75">
-                      {task.taskname}
-                      <br></br>
-                      <small>Created on: {task.createdat} </small>
-                      <br></br>
-                      <small>Assigned to: {string} </small>
-                      <br></br>
-                      <small>Unattempted: {string2}</small>
-                      <br></br>
-                      <small class="font-weight-bold">
-                        Due by: {task.duedate}
-                      </small>
-                    </div>
-
-                    <div>
-                      <p class="font-weight-bold text-danger">OVERDUE</p>
-                      <div>
-                        <form
-                          action={`/user/${task.ownerid}/editTask/${task.task_id}`}
-                          method="GET"
-                        >
-                          <button
-                            id={task.task_id}
-                            type="submit"
-                            className="btn btn-outline-primary"
-                          >
-                            Edit Task
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else {
-                return (
-                  <div class="m-3 d-flex justify-content-between">
-                    <div class="w-75">
-                      {task.taskname}
-                      <br></br>
-                      <small>Created on: {task.createdat} </small>
-                      <br></br>
-                      <small>Assigned to: {string} </small>
-                      <br></br>
-                      <small>Unattempted: {string2}</small>
-                      <br></br>
-                      <small>Due by: {task.duedate}</small>
-                    </div>
-
-                    <div>
-                      <p class="font-weight-bold text-secondary">ONGOING</p>
-                      <form
-                        action={`/user/${task.ownerid}/editTask/${task.task_id}`}
-                        method="GET"
-                      >
-                        <button
-                          id={task.task_id}
-                          type="submit"
-                          className="btn btn-outline-primary"
-                        >
-                          Edit Task
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                );
-              }
-            })}
+            {DomOfTasksInEachBoard}
           </div>
         </div>
       );
@@ -269,7 +144,7 @@ class Project extends React.Component {
           />
         </head>
         <body>
-          <Layout userid={this.props.userid}>
+          <Layout userid={this.props.currentUserId}>
             <div class="mx-4">
               <h3>Welcome, {username}</h3>
               <h4>These are the tasks you have assigned others to do</h4>
